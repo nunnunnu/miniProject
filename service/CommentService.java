@@ -25,11 +25,13 @@ public class CommentService {
   public static void makeDummyCmtData(int n) throws Exception {
     for(int i=0;i<n;i++){
       int r = (int)(Math.random()*PostService.posts.size());
+      int r2 = (int)(Math.random()*MemberService.members.size());
       PostService.selectedPost = PostService.posts.get(r);
+      System.out.println(r);
       Comment c = new Comment("댓글내용입니다."+i, commentNo);
-      c.setId(PostService.selectedPost.getId());
-      c.setPostNo(PostService.selectedPost.getNo());
-      c.setNickname(PostService.selectedPost.getNickname());
+      c.setId("user00"+r2);
+      c.setPostNo(r);
+      c.setNickname("닉네임"+r2);
       BufferedWriter writer = new BufferedWriter(
         new OutputStreamWriter(
           new FileOutputStream(
@@ -98,7 +100,6 @@ public class CommentService {
         if(sel.equalsIgnoreCase("y")){
         comments.get(idx).setStatus(2);
         CmtFileCover();
-        //파일 덮어쓰기 필요
         System.out.println("삭제가 완료되었습니다.");
         }
       }

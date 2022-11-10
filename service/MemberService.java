@@ -162,6 +162,10 @@ public class MemberService {
   
 
   public static void login() throws Exception {
+    if(loginMember!=null){
+      System.out.println("이미 로그인되어있습니다.");
+      return;
+    }
     System.out.println("============로그인==============");
     System.out.print("아이디 : ");
     String id = s.nextLine();
@@ -348,5 +352,9 @@ public class MemberService {
         }
       }
     }
+  }
+  public static void showMyInfo() {
+    System.out.println("============================회원정보 조회===============================");
+    System.out.println(loginMember);
   }
 }
