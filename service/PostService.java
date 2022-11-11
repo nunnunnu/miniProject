@@ -85,7 +85,7 @@ public class PostService {
     String title;
     String content;
     Integer category; 
-    Post p = new Post(no, null, null, null);
+    Post p = new Post(no, null, null, 1);
     while(true){
       if(MemberService.loginMember.getStatus()==3){
         System.out.print("카테고리 : (0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈) : ");
