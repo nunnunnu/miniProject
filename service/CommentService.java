@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.swing.text.AbstractDocument.Content;
+
 import data.Comment;
 
 public class CommentService {
@@ -130,6 +132,32 @@ public class CommentService {
       if(c.getPostNo()==PostService.selectedPost.getNo()){
         System.out.println(c);
       }
+    }
+  }
+  public static void createCmt() throws Exception {
+    if(MemberService.loginMember==null){
+      System.out.println("로그인 후 이용해주시길 바랍니다.");
+      return;
+    }
+    System.out.println("==============댓글을 작성합니다.=============");
+    String content;
+    while(true){
+      System.out.print("댓글 내용 : ");
+      content = s.nextLine();
+      if(content==null){
+        System.out.println("댓글이 입력되지않았습니다. ");
+      }else break;
+    }
+    System.out.println("정말로 댓글을 등록하시겠습니까?(예-Y,아니오-아무키나 입력하세요) : ");
+    String confirm = s.nextLine();
+    if(confirm.equalsIgnoreCase("y")){
+      comments.add(new Comment(content, commentNo));
+      commentNo++;
+      CmtFileCover();
+      System.out.println("댓글이 등록되었습니다.");
+      return;
+    }else{
+      System.out.println("댓글 등록이 취소되었습니다.");
     }
   }
 }

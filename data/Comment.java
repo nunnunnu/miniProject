@@ -3,6 +3,7 @@ package data;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import service.MemberService;
 import service.PostService;
 
 public class Comment {
@@ -76,8 +77,8 @@ public class Comment {
   public Comment(String commentText, Integer commentNo){
     setPostNo(PostService.selectedPost.getNo());
     setCommentNo(commentNo);
-    setId(PostService.selectedPost.getId());
-    setNickname(PostService.selectedPost.getNickname());
+    setId(MemberService.loginMember.getId());
+    setNickname(MemberService.loginMember.getNickname());
     setCommentText(commentText);
     setCreateDate(new Date());
     setStatus(0);

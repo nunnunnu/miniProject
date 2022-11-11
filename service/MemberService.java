@@ -189,6 +189,10 @@ public class MemberService {
     }
   }
   public static void logout() {
+    if(loginMember==null){
+      System.out.println("로그인이 되지않아 로그아웃을 실행할 수 없습니다.");
+      return;
+    }
     loginMember = null;
     System.out.println("로그아웃되었습니다.");
   }
@@ -221,7 +225,7 @@ public class MemberService {
           while(true){
             System.out.print("비밀번호(6자리 이상) : ");
             pwd = AES.Encrypt(s.nextLine());
-            if(pwd.length()<6){
+            if(AES.Decrypt(pwd).length()<6){
               System.out.println("비밀번호는 6자리 이상으로 등록해주세요.");
             }else {
               loginMember.setPwd(pwd);
@@ -238,8 +242,9 @@ public class MemberService {
             check = true;
             System.out.print("닉네임 : ");
             nickname = s.nextLine();
-            if(nickname.length()==0){
+            if(nickname==""){
               System.out.println("닉네임을 입력하지 않았습니다.");
+              check=false;
             }else {
               for(Member m : members){
                 if(nickname.equals(m.getNickname())){
@@ -247,8 +252,7 @@ public class MemberService {
                   check = false;
                 }
               }
-            }
-            if(check) {
+            }if(check) {
               loginMember.setNickname(nickname);
               members.set(idx, loginMember);
               
@@ -261,7 +265,7 @@ public class MemberService {
           while(true){
             System.out.print("이름 : ");
             name = s.nextLine();
-            if(name==null){
+            if(name==""){
               System.out.println("이름을 입력하지 않았습니다.");
             }else {
               loginMember.setName(name);
@@ -276,7 +280,7 @@ public class MemberService {
           while(true){
             System.out.print("생년월일(6자리로 입력하세요.) : ");
             birth = s.nextLine();
-            if(birth==null){
+            if(birth==""){
               System.out.println("생년월일을 입력하지 않았습니다.");
             }else if(birth.length()!=6){
               System.out.println("생년월일을 6자리로 입력해주세요.");
@@ -293,6 +297,8 @@ public class MemberService {
           System.out.println("번호를 잘못 입력하셨습니다.");
         }
       }
+    }else{
+      System.out.println("비밀번호를 잘못입력하셨습니다.");
     }
 
     
@@ -309,6 +315,7 @@ public class MemberService {
       loginMember.setStatus(2);
       members.set(idx, loginMember);
       memberFileCover();
+      MemberService.loginMember=null;
       System.out.println("회원 탈퇴가 완료되었습니다.");
     }else{
       System.out.println("회원 탈퇴가 취소되었습니다.");
@@ -354,6 +361,10 @@ public class MemberService {
     }
   }
   public static void showMyInfo() {
+    if(loginMember==null){
+      System.out.println("비회원은 회원정보 기능을 사용할 수 없습니다.");
+      return;
+    }
     System.out.println("============================회원정보 조회===============================");
     System.out.println(loginMember);
   }

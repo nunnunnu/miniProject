@@ -78,7 +78,7 @@ public class PostService {
 
   public static void createPost() throws Exception {
     if(MemberService.loginMember==null){
-      System.out.println("로그인 먼저 해주세요.");
+      System.out.println("비회원은 게시글을 작성할 수 없습니다.");
       return;
     }
     System.out.println("=============게시글을 작성합니다.=============");
@@ -266,14 +266,25 @@ public class PostService {
     }
     
   }
-  public static void selectCate() { //카테고리 선택
+  public static boolean selectCate() { //카테고리 선택
+    if(MemberService.loginMember==null){
+      System.out.println("비회원은 게시판을 조회할 수 없습니다.");
+      return false;
+    }
     System.out.println("조회할 게시판을 선택하세요.");
-    System.out.print("0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈, 6.전체출력 : ");
+    System.out.print("0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈, 6.전체출력, 7.종료: ");
     int sel = s.nextInt();
     s.nextLine();
-
-    showPostList(sel);
-    
+    if(sel>=0 && sel<Post.cate.length){
+      showPostList(sel);
+      return true;
+    }else if(sel==7){
+      System.out.println("처음으로 돌아갑니다.");
+      return false;
+    }else{
+      System.out.println("번호를 잘못 입력하셨습니다.");
+      return false;
+    }
   }
   public static void showPostList(int idx) {
     for(Post p : posts){
@@ -292,7 +303,10 @@ public class PostService {
     }
   }
   public static void showPostDatail() {
-    selectCate();
+    if(MemberService.loginMember==null){
+      System.out.println("비회원은 게시글을 조회할 수 있습니다.");
+      return;
+    }
     System.out.print("조회할 게시글의 번호를 입력하세요 : ");
     Integer postNo = s.nextInt();
     s.nextLine();
