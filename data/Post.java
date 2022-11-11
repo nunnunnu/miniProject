@@ -38,16 +38,26 @@ public class Post {
     return this.title;
   }
 
-  public void setTitle(String title) {
+  public boolean setTitle(String title) {
+    if(title == ""){
+      System.out.println("제목이 입력되지 않았습니다.");
+      return false;
+    }
     this.title = title;
+    return true;
   }
   
   public String getContent() {
     return this.content;
   }
   
-  public void setContent(String content) {
+  public boolean setContent(String content) {
+    if(content == ""){
+      System.out.println("글 내용이 입력되지 않았습니다.");
+      return false;
+    }
     this.content = content;
+    return true;
   }
 
   public String getNickname() {
@@ -86,8 +96,23 @@ public class Post {
     return this.category;
   }
 
-  public void setCategory(Integer category) {
+  public boolean setCategory(Integer category) {
+    if(MemberService.loginMember==null){
+      this.category = category;
+      return true;
+    }else if(MemberService.loginMember.getStatus()==0){
+      if(category>= Post.cate.length || category<=0){ //일반회원은 공지 작성 불가능
+        System.out.println("번호를 잘못입력하셨습니다??.");
+        return false;
+      }
+    }else if(MemberService.loginMember.getStatus()==3){
+      if(category>= Post.cate.length || category<0){ //관리자는 공지 작성 가능
+        System.out.println("번호를 잘못입력하셨습니다.");
+        return false;
+      }
+    }
     this.category = category;
+    return true;
   }
 
   public Post(){}
@@ -103,12 +128,12 @@ public class Post {
   }
 
   //더미데이터용 생성자
-  public Post(Integer no, String title, String content, Integer category, String nickname, String id){ 
+  public Post(Integer no, String title, String content, Integer category, String nickname, String id, Integer status){ 
     setTitle(title);
     setContent(content);
     setCreateDate(new Date());
     setCategory(category);
-    setStatus(0);
+    setStatus(status);
     setNickname(nickname);
     setId(id);
     setNo(no);
@@ -127,6 +152,9 @@ public class Post {
     System.out.println();
     if(modDate!=null){
       System.out.println("마지막 수정일 : "+modDate);
+    }
+    if(MemberService.loginMember.getStatus()==3){
+      System.out.println("게시글 작성자 아이디 "+id);
     }
     System.out.println("---------------------------------------------------------");
 

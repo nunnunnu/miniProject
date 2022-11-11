@@ -24,7 +24,12 @@ public class MemberService {
   
   public static void makeDummymemberData(int n) throws Exception {
     for(int i=0;i<n;i++){
-      Member m = new Member("user00"+i, AES.Encrypt("pwd000"+i), "닉네임"+i, "이름"+i, "990101");
+      int r = (int)(Math.random()*199999)+1000000;//주민 뒷자리 랜덤 값
+      String birth = Integer.toString((int)(Math.random()*199999)+800000); 
+      String regNo = birth+r;
+      
+      
+      Member m = new Member("user00"+i, AES.Encrypt("pwd000"+i), "닉네임"+i, "이름"+i, birth, regNo);
       members.add(m);
 
     BufferedWriter writer = new BufferedWriter(
@@ -39,7 +44,9 @@ public class MemberService {
     }
   }
   public static void makeMaster() throws Exception {
-    Member m = new Member("master1", AES.Encrypt("pwd1234"), "운영자", "박진희", "970707");
+
+    Member m = new Member("master1", AES.Encrypt("pwd1234"), "운영자", "박진희", "970707","9707072000000");
+    m.setStatus(3);
     members.add(m);
     BufferedWriter writer = new BufferedWriter(
       new OutputStreamWriter(
@@ -69,8 +76,9 @@ public class MemberService {
       String name = split[3];
       String birth = split[4];
       Integer status = Integer.parseInt(split[5]);
+      String regNo = split[6];
       
-      Member m = new Member(id, pwd, nickname, name, birth);
+      Member m = new Member(id, pwd, nickname, name, birth, regNo);
       m.setStatus(status);
       members.add(m);
     }
@@ -84,81 +92,70 @@ public class MemberService {
     String name;
     String birth;
     boolean check;
+    String regNo;
+    Member m = new Member();
+    m.setStatus(0);
     while(true){
-      check=true;
       System.out.print("아이디(6자리 이상) : ");
       id = s.nextLine();
-      if(id.length()<6){
-        check = false;
-        System.out.println("아이디는 6자리 이상으로 등록해주세요.");
-      }else{
-        for(Member m : members){
-          if(id.equals(m.getId())){
-            System.out.println("이미 가입된 아이디입니다. ");
-            check = false;
-          }
-        }
-      }if(check) break;
+      check = m.setId(id);
+      if(check) {
+        break;
+      }
     }
     while(true){
       System.out.print("비밀번호(6자리 이상) : ");
       pwd = AES.Encrypt(s.nextLine());
-      if(pwd.length()<6){
-        System.out.println("비밀번호는 6자리 이상으로 등록해주세요.");
-      }else break;
+      check = m.setPwd(pwd);
+      if(check){
+        break;
+      }
     }
     while(true){
-      check = true;
       System.out.print("닉네임 : ");
       nickname = s.nextLine();
-      if(nickname.length()==0){
-        System.out.println("닉네임을 입력하지 않았습니다.");
-      }else {
-        for(Member m : members){
-          if(nickname.equals(m.getNickname())){
-            System.out.println("이미 설정된 닉네임입니다. ");
-            check = false;
-          }
-        }
-      }if(check) break;
+      check = m.setNickname(nickname);
+      if(check){
+        break;
+      }
     }
     while(true){
       System.out.print("이름 : ");
       name = s.nextLine();
-      if(name==null){
-        System.out.println("이름을 입력하지 않았습니다.");
-      }else break;
+      check = m.setName(name);
+      if(check){
+        break;
+      }
     }
     while(true){
       System.out.print("생년월일(6자리로 입력하세요.) : ");
       birth = s.nextLine();
-      if(birth==null){
-        System.out.println("생년월일을 입력하지 않았습니다.");
-      }else if(birth.length()!=6){
-        System.out.println("생년월일을 6자리로 입력해주세요.");
-      }else break;
-    }
-    
-    for(Member m : members){
-      if(name.equals(m.getName()) && birth.equals(m.getBirth())){
-        System.out.println("이미 존재하는 회원입니다");
-        return;
+      check = m.setBirth(birth);
+      if(check){
+        break;
       }
     }
-    Member m = new Member(id, pwd, nickname, name, birth);
-    members.add(m);
-    
-    BufferedWriter writer = new BufferedWriter(
-      new OutputStreamWriter(
-        new FileOutputStream(
-          new File("members.dat"),true 
-        ), "UTF-8" 
-      )
-    );
-    writer.write(m.makeMemberData()+"\r\n");
-    writer.close();
-    System.out.println("회원가입이 완료되었습니다.");
+    while(true){
+      System.out.print("주민등록번호(-기호없이 13자리) : ");
+      regNo = s.nextLine();
+      check = m.setRegNo(regNo);
+      if(check) {
+        members.add(m);
+        BufferedWriter writer = new BufferedWriter(
+          new OutputStreamWriter(
+            new FileOutputStream(
+              new File("members.dat"),true 
+            ), "UTF-8" 
+          )
+        );
+        writer.write(m.makeMemberData()+"\r\n");
+        writer.close();
+        System.out.println("회원가입이 완료되었습니다.");
+        break;
+      }
     }
+  }
+    
   
 
   public static void login() throws Exception {
@@ -207,6 +204,7 @@ public class MemberService {
     String name;
     String birth;
     boolean check;
+    Member m = new Member();
     System.out.println("===============회원정보 수정=================");
     int idx = members.indexOf(loginMember); //로그인 한 회원의 인덱스를 얻어옴
     System.out.println("비밀번호를 다시 입력해주세요");
@@ -225,13 +223,9 @@ public class MemberService {
           while(true){
             System.out.print("비밀번호(6자리 이상) : ");
             pwd = AES.Encrypt(s.nextLine());
-            if(AES.Decrypt(pwd).length()<6){
-              System.out.println("비밀번호는 6자리 이상으로 등록해주세요.");
-            }else {
-              loginMember.setPwd(pwd);
-              System.out.println(loginMember.getPwd());
+            check =  loginMember.setPwd(pwd);
+            if(check){
               members.set(idx, loginMember);
-
               memberFileCover();
               System.out.println("비밀번호가 수정되었습니다.");
               break;
@@ -239,23 +233,12 @@ public class MemberService {
           }
         }else if(sel==2){
           while(true){
-            check = true;
             System.out.print("닉네임 : ");
             nickname = s.nextLine();
-            if(nickname==""){
-              System.out.println("닉네임을 입력하지 않았습니다.");
-              check=false;
-            }else {
-              for(Member m : members){
-                if(nickname.equals(m.getNickname())){
-                  System.out.println("이미 설정된 닉네임입니다. ");
-                  check = false;
-                }
-              }
-            }if(check) {
+            check = loginMember.setNickname(nickname);
+            if(check) {
               loginMember.setNickname(nickname);
               members.set(idx, loginMember);
-              
               memberFileCover();
               System.out.println("닉네임이 변경되었습니다.");
               break;
@@ -265,12 +248,10 @@ public class MemberService {
           while(true){
             System.out.print("이름 : ");
             name = s.nextLine();
-            if(name==""){
-              System.out.println("이름을 입력하지 않았습니다.");
-            }else {
+            check = loginMember.setName(name);
+            if(check) {
               loginMember.setName(name);
               members.set(idx, loginMember);
-
               memberFileCover();
               System.out.println("이름이 수정되었습니다.");
               break;
@@ -280,11 +261,8 @@ public class MemberService {
           while(true){
             System.out.print("생년월일(6자리로 입력하세요.) : ");
             birth = s.nextLine();
-            if(birth==""){
-              System.out.println("생년월일을 입력하지 않았습니다.");
-            }else if(birth.length()!=6){
-              System.out.println("생년월일을 6자리로 입력해주세요.");
-            }else {
+            check = loginMember.setBirth(birth);
+            if(check){
               loginMember.setBirth(birth);
               members.set(idx, loginMember);
               
@@ -300,8 +278,6 @@ public class MemberService {
     }else{
       System.out.println("비밀번호를 잘못입력하셨습니다.");
     }
-
-    
   }
   public static void leaveMember() throws Exception {
     if(loginMember==null){
@@ -367,5 +343,59 @@ public class MemberService {
     }
     System.out.println("============================회원정보 조회===============================");
     System.out.println(loginMember);
+  }
+  public static void materMemberBlock() throws Exception {
+    if(MemberService.loginMember.getStatus()==3){
+      System.out.print("블라인드 할 회원의 아이디를 입력하세요. ");
+      String id = s.nextLine();
+      int idx = 0;
+      for(int i=0;i<members.size();i++){
+        if(members.get(i).getId().equals(id)){
+          idx = i;
+          break;
+        }
+      }
+      System.out.println("해당 회원을 블라인드처리 하시겠습니까?(예-Y,아니오-아무키나 누르세요) :");
+      String confirm = s.nextLine();
+      if(confirm.equalsIgnoreCase("y")){
+        members.get(idx).setStatus(1);
+        memberFileCover();
+        System.out.println("해당 회원을 정지시켰습니다.");
+      }
+    }else{
+      System.out.println("운영자만 사용 가능한 기능입니다.");
+    }
+  }
+
+  public static void blockMemberList() {
+    for(Member m : members){
+      if(m.getStatus()==1){
+        System.out.println(m);
+      }
+    }
+  }
+  public static void unBlockMember() throws Exception {
+    System.out.println("블라인드 해제할 회원의 아이디를 입력하세요");
+    String sel = s.nextLine();
+    int idx=0;
+    boolean check = false;
+    for(int i=0;i<members.size();i++){
+      if(members.get(i).getId().equals(sel)){
+        idx=i;
+        check=true;
+        break;
+      }
+    }
+    if(check){
+      System.out.println("정말 해당 회원의 블라인드를 해제하시겠습니까? (예-Y,아니오-아무키나 누르세요) :");
+      String confirm = s.nextLine();
+      if(confirm.equalsIgnoreCase("y")){
+        members.get(idx).setStatus(0);
+        memberFileCover();
+        System.out.println("해당 회원이 블라인드 해제되었습니다.");
+      }
+    }else{
+      System.out.println("해당 해원이 존재하지 않습니다.");
+    }
   }
 }

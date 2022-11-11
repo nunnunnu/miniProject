@@ -53,8 +53,13 @@ public class Comment {
     return this.commentText;
   }
 
-  public void setCommentText(String commentText) {
+  public boolean setCommentText(String commentText) {
+    if(commentText==""){
+      System.out.println("댓글이 입력되지않았습니다. ");
+      return false;
+    }
     this.commentText = commentText;
+    return true;
   }
 
   public String getCreateDate() {

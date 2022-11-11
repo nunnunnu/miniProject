@@ -124,13 +124,24 @@ public class CommentService {
   public static void showCmtList() {
     if(PostService.selectedPost==null){ //선택 글이 없으면 모두 조회
       for(Comment c : CommentService.comments){
-        System.out.println(c);
+        if(c.getStatus()==0){
+          System.out.print(c);
+          if(MemberService.loginMember.getStatus()==3){
+            System.out.print(" - "+c.getId());
+          }
+          System.out.println();
+        }
       }
-      
     }
     for(Comment c : CommentService.comments){
       if(c.getPostNo()==PostService.selectedPost.getNo()){
-        System.out.println(c);
+        if(c.getStatus()==0){
+          System.out.print(c);
+          if(MemberService.loginMember.getStatus()==3){
+            System.out.print(" - "+c.getId());
+          }
+          System.out.println();
+        }
       }
     }
   }
@@ -140,24 +151,90 @@ public class CommentService {
       return;
     }
     System.out.println("==============댓글을 작성합니다.=============");
+    Comment c = new Comment(null, commentNo);
     String content;
     while(true){
       System.out.print("댓글 내용 : ");
       content = s.nextLine();
-      if(content==null){
-        System.out.println("댓글이 입력되지않았습니다. ");
-      }else break;
-    }
-    System.out.println("정말로 댓글을 등록하시겠습니까?(예-Y,아니오-아무키나 입력하세요) : ");
-    String confirm = s.nextLine();
-    if(confirm.equalsIgnoreCase("y")){
-      comments.add(new Comment(content, commentNo));
-      commentNo++;
-      CmtFileCover();
-      System.out.println("댓글이 등록되었습니다.");
-      return;
+      if(c.setCommentText(content)){
+        System.out.println("정말로 댓글을 등록하시겠습니까?(예-Y,아니오-아무키나 입력하세요) : ");
+        String confirm = s.nextLine();
+        if(confirm.equalsIgnoreCase("y")){
+          comments.add(new Comment(content, commentNo));
+          commentNo++;
+          CmtFileCover();
+          System.out.println("댓글이 등록되었습니다.");
+          return;
+        }else{
+          System.out.println("댓글 등록이 취소되었습니다.");
+        }
+      }
+    } 
+  }
+  public static void materCmtBlock() throws Exception {
+    if(MemberService.loginMember.getStatus()==3){
+      System.out.print("블라인드 할 댓글의 번호를 입력하세요 : ");
+      int no = s.nextInt();
+      s.nextLine();
+      boolean check = true;
+      int idx=0;
+      for(int i=0;i<comments.size();i++){
+        if(comments.get(i).getCommentNo()==no){
+          idx=i;
+          check=false;
+          break;
+        }
+      }
+      if(check || comments.get(idx).getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
+        System.out.println("존재하지 않는 댓글입니다.");
+      }else{
+        System.out.println(comments.get(idx));
+        System.out.println("정말로 블라인드처리 하시겠습니까?(예-Y, 아니오-아무키나 누르세요)");
+        String sel = s.nextLine();
+        if(sel.equalsIgnoreCase("y")){
+        comments.get(idx).setStatus(1);
+        CmtFileCover();
+        System.out.println("해당 댓글이 블라인드 완료되었습니다.");
+        }
+      }
     }else{
-      System.out.println("댓글 등록이 취소되었습니다.");
+      System.out.println("해당 기능은 운영자만 사용가능합니다.");
+    }
+  }
+  public static void blockCmtList() {
+    if(MemberService.loginMember.getStatus()!=3){
+      System.out.println("해당 기능은 운영자만 사용가능합니다.");
+      return;
+    }
+    for(Comment c : comments){
+      if(c.getStatus()==1){
+        System.out.println(c);
+      }
+    }
+  }
+  public static void unBlockCmd() throws Exception {
+    System.out.println("블라인드 해제할 댓글의 번호를 입력하세요");
+    int sel = s.nextInt();
+    s.nextLine();
+    int idx=0;
+    boolean check = false;
+    for(int i=0;i<comments.size();i++){
+      if(comments.get(i).getCommentNo()==sel){
+        idx=i;
+        check=true;
+        break;
+      }
+    }
+    if(check){
+      System.out.println("정말 해당 게시글의 블라인드를 해제하시겠습니까? (예-Y,아니오-아무키나 누르세요) :");
+      String confirm = s.nextLine();
+      if(confirm.equalsIgnoreCase("y")){
+        comments.get(idx).setStatus(0);
+        CmtFileCover();
+        System.out.println("해당 게시글이 블라인드 해제되었습니다.");
+      }
+    }else{
+      System.out.println("해당 댓글이 존재하지 않습니다.");
     }
   }
 }

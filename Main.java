@@ -1,5 +1,6 @@
 import java.util.Scanner;
 
+import data.Member;
 import data.Post;
 import service.CommentService;
 import service.MemberService;
@@ -8,15 +9,22 @@ import service.PostService;
 public class Main {
   public static Scanner s = new Scanner(System.in);
   public static void main(String[] args) throws Exception {
-    MemberService.loadMemberData();
-    PostService.loadPostData();
-    // CommentService.makeDummyCmtData(100);
-    CommentService.loadCmtData();
+    // MemberService.makeMaster();
+    // MemberService.makeDummymemberData(10);
+    // PostService.makeDummyPostData(50);
     
+    MemberService.loadMemberData();
+    // PostService.loadPostData();
+    // CommentService.makeDummyCmtData(100);
+    // CommentService.loadCmtData();
+    // MemberService.loginMember = new Member("123456", "123456", "aaaaaa", "ddddd", "123456", "1111111111111");
     while(true){
       System.out.println("======================메뉴를 선택하세요======================");
       if(MemberService.loginMember==null){
-        System.out.print("1.글 등록, 2.글 목록, 97.로그인, 0.종료 : >> ");
+        System.out.print("1.글 등록, 2.글 목록, 96,회원가입, 97.로그인, 0.종료 : >> ");
+      }else if(MemberService.loginMember.getStatus()==3){
+        System.out.println("### "+MemberService.loginMember.getNickname()+"님 환영합니다.");
+        System.out.print("1.글 등록, 2.글 목록, 3.블라인드 관리 96,회원가입, 97.로그인, 0.종료 : >> ");        
       }else{
         System.out.println("### "+MemberService.loginMember.getNickname()+"님 환영합니다.");
         System.out.print("1.글 등록, 2.글 목록, 98.회원정보, 99.로그아웃, 0.종료 : >> ");
@@ -27,6 +35,8 @@ public class Main {
         System.out.println("프로그램을 종료합니다.");
         s.close();
         break;
+      }else if(sel==96){
+        MemberService.addMember();
       }else if(sel==97){ //메인메뉴 - 로그인
         MemberService.login();
       }else if(sel==98){ //메인메뉴 - 회원정보
@@ -73,9 +83,9 @@ public class Main {
               System.out.println("번호를 잘못 선택하셨습니다");
               }
             }// 작성 댓글보기 while문 종료
-          }else if(sel==3){
+          }else if(sel==3){ //회원정보 - 회원정보 수정
             MemberService.modifyMember();
-          }else if(sel==4){
+          }else if(sel==4){ //회원정보 - 회원 탈퇴
             MemberService.leaveMember();
             if(MemberService.loginMember==null){
               break;
@@ -97,16 +107,19 @@ public class Main {
               sel = s.nextInt();
               s.nextLine();
               if(sel==1){ //글 목록 조회 - 글 상세 조회
-                PostService.showPostDatail();
-                System.out.print("댓글 달기-Y, 나가기-아무키나 누르세요 : ");
-                String confirm = s.nextLine();
-                if(confirm.equalsIgnoreCase("y")){
-                  CommentService.createCmt();
-                  break;
-                }else{
-                  System.out.println("댓글 달기를 취소하셨습니다.");
-                  break;
+                check = PostService.showPostDatail();
+                if(!check){
+                  System.out.print("댓글 달기-Y, 나가기-아무키나 누르세요 : ");
+                  String confirm = s.nextLine();
+                  if(confirm.equalsIgnoreCase("y")){
+                    CommentService.createCmt();
+                    break;
+                  }else{
+                    System.out.println("댓글 달기를 취소하셨습니다.");
+                    break;
+                  }
                 }
+                break;
               }else if(sel==0){ //글 목록 조회 - 메인화면으로
                 System.out.println("돌아갑니다.");
                 break;
@@ -118,6 +131,27 @@ public class Main {
             break;
           }
         }//글 목록 조회 while문 종료
+      }else if(sel==3){
+        while(true){
+          System.out.println("1,블라인드 게시글관리, 2.블라인드 댓글 관리, 3.블라인드 회원관리, 0.메인화면으로 이동 : ");
+          sel = s.nextInt();
+          s.nextLine();
+          if(sel==0){
+            System.out.println("메인화면으로 이동합니다.");
+            break;
+          }else if(sel==1){
+            PostService.blockPostList();
+            PostService.unBlockPost();
+          }else if(sel==2){
+            CommentService.blockCmtList();
+            CommentService.unBlockCmd();
+          }else if(sel==3){
+            MemberService.blockMemberList();
+            MemberService.unBlockMember();
+          }
+        }
+
+      
       }else{
         System.out.println("번호를 잘못 선택하셨습니다.");
       }

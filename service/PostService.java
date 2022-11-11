@@ -25,8 +25,8 @@ public class PostService {
 
   public static void makeDummyPostData(int n) throws Exception {
     for(int i=0;i<n;i++){
-      int r = (int)(Math.random()*Post.cate.length);
-      Post p = new Post(no, "글 제목입니다"+i, "글 내용입니다."+i, r,"닉네임"+i%10,"user00"+i%10);
+      int r = (int)(Math.random()*Post.cate.length-1)+1;
+      Post p = new Post(no, "글 제목입니다"+i, "글 내용입니다."+i, r,"닉네임"+i%10,"user00"+i%10,0);
       posts.add(p);
 
     BufferedWriter writer = new BufferedWriter(
@@ -63,7 +63,7 @@ public class PostService {
       String id = split[7];
       no = Integer.parseInt(split[8]);
       
-      Post p = new Post(no, title, content, category, nickname, id);
+      Post p = new Post(no, title, content, category, nickname, id, status);
       p.setCreateDate(createDate);
       if(!(split[4].equals("null"))){
         Date modDate = f.parse(split[4]);
@@ -84,37 +84,36 @@ public class PostService {
     System.out.println("=============게시글을 작성합니다.=============");
     String title;
     String content;
-    Integer category; //0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈
-
+    Integer category; 
+    Post p = new Post(no, null, null, null);
     while(true){
-      System.out.print("카테고리 : (1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈)");
+      if(MemberService.loginMember.getStatus()==3){
+        System.out.print("카테고리 : (0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈) : ");
+      }else if(MemberService.loginMember.getStatus()==0){
+        System.out.print("카테고리 : (1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈) : ");
+      }
       category = s.nextInt();
       s.nextLine();
-      if(category>= Post.cate.length || category<=0){
-        System.out.println("번호를 잘못입력하셨습니다.");
-      }else{
+      if(p.setCategory(category)){
+        System.out.println(p.getCategory());
         break;
       }
+      System.out.println(p.getCategory());
     }
     while(true){
       System.out.print("글 제목 : ");
       title = s.nextLine();
-      if(title == null){
-        System.out.println("제목이 입력되지 않았습니다.");
-      }else{
+      if(p.setTitle(title)){
         break;
       }
     }
     while(true){
       System.out.print("글 내용 : ");
       content = s.nextLine();
-      if(content == null){
-        System.out.println("글 내용이 입력되지 않았습니다.");
-      }else{
-        break;
+      if(p.setContent(content)){
+      break;
       }
     }
-    Post p = new Post(no, title, content, category);
     posts.add(p);
     BufferedWriter writer = new BufferedWriter(
       new OutputStreamWriter(
@@ -134,45 +133,47 @@ public class PostService {
       return;
     }
     System.out.println("=============게시글 수정==============");
-    System.out.println("------------------내가 작성한 글 목록------------------");
-    MemberService.showMyPost();
-    System.out.println("-----------------------------------------------------");
+    if(selectedPost==null){
+      System.out.println("------------------내가 작성한 글 목록------------------");
+      MemberService.showMyPost();
+      System.out.println("-----------------------------------------------------");
+      System.out.print("수정할 게시글의 번호를 입력하세요");
+      Integer no = s.nextInt();
+      s.nextLine();
+      int idx=0;
+      for(int i=0;i<posts.size();i++){
+        if(posts.get(i).getNo()==no){
+          idx=i;
+        }
+      }
+      selectedPost = posts.get(idx);
+
+    }
     String title;
     String content;
     Integer category; //0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈
-    System.out.print("수정할 게시글의 번호를 입력하세요");
-    Integer no = s.nextInt();
-    s.nextLine();
-    int idx=0;
-    for(int i=0;i<posts.size();i++){
-      if(posts.get(i).getNo()==no){
-        idx=i;
-      }
-    }
-    if(posts.get(idx).getId().equals(MemberService.loginMember.getId())){
+    Post p = new Post(no, null, null, 0);
+    if(selectedPost.getId().equals(MemberService.loginMember.getId())){
       while(true){
         System.out.println("수정할 정보를 선택하세요 : ");
         System.out.print("1.카테고리, 2.글 제목, 3.글 내용, 0.종료");
         int sel = s.nextInt();
         s.nextLine();
-
         if(sel==0){
-          System.out.println("정보수정이 종료되었습니다.");
+          System.out.println("게시글 수정이 종료되었습니다.");
           return;
         }else if(sel==1){
           while(true){
             System.out.print("카테고리 : (1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈)");
             category = s.nextInt();
             s.nextLine();
-            System.out.println(Post.cate.length);
-            if(category>= Post.cate.length || category<=0){
-              System.out.println("번호를 잘못입력하셨습니다.");
-            }else{
-              posts.get(idx).setCategory(category);
-              posts.get(idx).setModDate(new Date());
+            if(p.setCategory(category)){
+              selectedPost.setCategory(category);
+              selectedPost.setModDate(new Date());
               
               postFileCover();
               System.out.println("카테고리가 수정되었습니다.");
+              selectedPost=null;
               break;
             }
           }
@@ -180,14 +181,13 @@ public class PostService {
           while(true){
             System.out.print("글 제목 : ");
             title = s.nextLine();
-            if(title == null){
-              System.out.println("제목이 입력되지 않았습니다.");
-            }else{
-              posts.get(idx).setTitle(title);
-              posts.get(idx).setModDate(new Date());
+            if(p.setTitle(title)){
+              selectedPost.setTitle(title);
+              selectedPost.setModDate(new Date());
               
               postFileCover();
               System.out.println("글 제목이 수정되었습니다.");
+              selectedPost=null;
               break;
             }
           }
@@ -195,23 +195,20 @@ public class PostService {
           while(true){
             System.out.print("글 내용 : ");
             content = s.nextLine();
-            if(content == null){
-              System.out.println("글 내용이 입력되지 않았습니다.");
-            }else{
-              posts.get(idx).setContent(content);
-              posts.get(idx).setModDate(new Date());
+            if(p.setContent(content))
+              selectedPost.setContent(content);
+              selectedPost.setModDate(new Date());
               
               postFileCover();
               System.out.println("글 제목이 수정되었습니다.");
+              selectedPost=null;
               break;
             }
           }
         }
-      }
-    }else{
-      System.out.println("작성한 본인이 아니면 글을 수정할 수 없습니다.");
+      }else{
+        System.out.println("작성한 본인이 아니면 글을 수정할 수 없습니다.");
     }
-
   }
   public static void postFileCover() throws Exception {
     BufferedWriter writer = new BufferedWriter(
@@ -232,39 +229,42 @@ public class PostService {
       System.out.println("아직 로그인하지 않으셨습니다. 로그인 먼저 해주세요");
       return;
     }
-    System.out.println("=============게시글 수정==============");
-    System.out.println("------------------내가 작성한 글 목록------------------");
-    MemberService.showMyPost();
-    System.out.println("-----------------------------------------------------");
-    System.out.print("삭제할 게시글의 번호를 입력하세요");
-    Integer postNo = s.nextInt();
-    s.nextLine();
     int idx=0;
-    boolean check = true;
-    for(int i=0;i<posts.size();i++){
-      if(posts.get(i).getNo()==postNo){
-        idx=i;
-        check=false;
-        break;
+    boolean check = false;
+    System.out.println("=============게시글 삭제==============");
+    if(selectedPost==null){
+      System.out.println("------------------내가 작성한 글 목록------------------");
+      MemberService.showMyPost();
+      System.out.println("-----------------------------------------------------");
+      System.out.print("삭제할 게시글의 번호를 입력하세요");
+      Integer postNo = s.nextInt();
+      for(int i=0;i<posts.size();i++){
+        if(posts.get(i).getNo()==postNo){
+          idx=i;
+          check=true;
+          break;
+        }
       }
+      selectedPost.showDetailInfo(idx);
+      selectedPost = posts.get(idx);
     }
-    if(check || posts.get(idx).getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
+    s.nextLine();
+    if(check || selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
       System.out.println("존재하지 않는 게시글입니다.");
-    }else if(posts.get(idx).getId().equals(MemberService.loginMember.getId())){
-      posts.get(idx).showDetailInfo(idx);
+    }else if(selectedPost.getId().equals(MemberService.loginMember.getId())){
       System.out.println("정말로 삭제하시겠습니까?(삭제-y, 취소-아무키나 누르세요)");
       String sel = s.nextLine();
       if(sel.equalsIgnoreCase("y")){
-        posts.get(idx).setStatus(2);
+        selectedPost.setStatus(2);
         postFileCover();
         System.out.println("삭제가 완료되었습니다.");
+        selectedPost=null;
       }
-    }
-    else {
+    }else {
       System.out.println("본인이 작성한 글만 삭제할 수 있습니다.");
+      selectedPost=null;
       return;
     }
-    
   }
   public static boolean selectCate() { //카테고리 선택
     if(MemberService.loginMember==null){
@@ -275,7 +275,7 @@ public class PostService {
     System.out.print("0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈, 6.전체출력, 7.종료: ");
     int sel = s.nextInt();
     s.nextLine();
-    if(sel>=0 && sel<Post.cate.length){
+    if(sel>=0 && sel<=Post.cate.length){
       showPostList(sel);
       return true;
     }else if(sel==7){
@@ -302,10 +302,10 @@ public class PostService {
       }
     }
   }
-  public static void showPostDatail() {
+  public static boolean showPostDatail() throws Exception {
     if(MemberService.loginMember==null){
       System.out.println("비회원은 게시글을 조회할 수 있습니다.");
-      return;
+      return false;
     }
     System.out.print("조회할 게시글의 번호를 입력하세요 : ");
     Integer postNo = s.nextInt();
@@ -325,7 +325,90 @@ public class PostService {
     }else{
       posts.get(idx).showDetailInfo(idx);
       CommentService.showCmtList();
+      if(MemberService.loginMember.getStatus()==3){
+        System.out.println("1.게시글 블라인드, 2.댓글 블라인드, 3.회원 블라인드 0.취소");
+        int sel=s.nextInt();
+        s.nextLine();
+        if(sel==0){
+          System.out.println("취소되었습니다"); 
+        }else if(sel==1){
+          materPostBlock(idx);
+        }else if(sel==2){
+          CommentService.materCmtBlock();
+        }else if(sel==3){
+          MemberService.materMemberBlock();
+        }else{
+          System.out.println("번호 입력이 잘못되었습니다.");
+        }
+      }
+      if(posts.get(idx).getId().equals(MemberService.loginMember.getId())){
+        System.out.println("1. 게시글 수정, 2.게시글 삭제, 0.취소 : ");
+        int sel = s.nextInt();
+        if(sel==0){
+          System.out.println("카테고리 선택으로 돌아갑니다.");
+          selectedPost=null;
+          return false;
+        }else if(sel==1){
+          modifyPost();
+        }else if(sel==2){
+          deletePost();
+          return true;
+        }else{
+          System.out.println("번호를 잘못입력하셨습니다.");
+        }
+      }
     }
-
+    selectedPost=null;
+    return false;
   }
+  public static void materPostBlock(int idx) throws Exception {
+    if(MemberService.loginMember.getStatus()==3){
+      System.out.println("해당 게시글을 블라인드처리 하시겠습니까?(예-Y,아니오-아무키나 누르세요) :");
+      String confirm = s.nextLine();
+      if(confirm.equalsIgnoreCase("y")){
+        posts.get(idx).setStatus(1);
+        postFileCover();
+        System.out.println("게시글이 블라인드 되었습니다.");
+      }
+    }else{
+      System.out.println("해당 메뉴는 운영자만 사용가능합니다.");
+    }
+  }
+  public static void blockPostList() {
+    if(MemberService.loginMember.getStatus()==3){
+      for(Post p : posts){
+        if(p.getStatus()==1){
+          System.out.println(p);
+        }
+      }
+    }else{
+      System.out.println("해당 기능은 운영자만 사용 가능합니다.");
+    }
+  }
+  public static void unBlockPost() throws Exception {
+    System.out.println("블라인드 해제할 게시글의 번호를 입력하세요");
+    int sel = s.nextInt();
+    s.nextLine();
+    int idx=0;
+    boolean check = false;
+    for(int i=0;i<posts.size();i++){
+      if(posts.get(i).getNo()==sel){
+        idx=i;
+        check=true;
+        break;
+      }
+    }
+    if(check){
+      System.out.println("정말 해당 게시글의 블라인드를 해제하시겠습니까? (예-Y,아니오-아무키나 누르세요) :");
+      String confirm = s.nextLine();
+      if(confirm.equalsIgnoreCase("y")){
+        posts.get(idx).setStatus(0);
+        postFileCover();
+        System.out.println("해당 게시글이 블라인드 해제되었습니다.");
+      }
+    }else{
+      System.out.println("해당 게시글이 존재하지 않습니다.");
+    }
+  }
+  
 }
