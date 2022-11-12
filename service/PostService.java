@@ -100,7 +100,6 @@ public class PostService {
       category = s.nextInt();
       s.nextLine();
       if(p.setCategory(category)){
-        System.out.println(p.getCategory());
         break;
       }
     }
@@ -142,7 +141,7 @@ public class PostService {
       // System.out.println("------------------내가 작성한 글 목록------------------");
       // MemberService.showMyPost();
       // System.out.println("-----------------------------------------------------");
-      System.out.print("수정할 게시글의 번호를 입력하세요");
+      System.out.print("수정할 게시글의 번호를 입력하세요 : ");
       Integer no = s.nextInt();
       s.nextLine();
       int idx=0;
@@ -235,9 +234,6 @@ public class PostService {
     int idx=-1;
     System.out.println("=============게시글 삭제==============");
     if(selectedPost==null){
-      // System.out.println("------------------내가 작성한 글 목록------------------");
-      // MemberService.showMyPost();
-      // System.out.println("-----------------------------------------------------");
       System.out.print("삭제할 게시글의 번호를 입력하세요 : ");
       Integer postNo = s.nextInt();
       for(int i=0;i<posts.size();i++){
@@ -354,6 +350,7 @@ public class PostService {
           modifyPost();
         }else if(sel==2){
           deletePost();
+          selectedPost=null;
           return true;
         }else{
           System.out.println("번호를 잘못입력하셨습니다.");

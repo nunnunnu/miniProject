@@ -322,12 +322,17 @@ public class MemberService {
       System.out.println("로그인되지않았습니다. 로그인 먼저 해주세요.");
       return;
     }
+    boolean check = false;
     for(Post p : PostService.posts){
       if(loginMember.getId().equals(p.getId())){
         if(p.getStatus()==0){
           System.out.println(p);
+          check = true;
         }
       }
+    }
+    if(!check){
+      System.out.println("작성하신 게시글이 없습니다.");
     }
   }
   public static void showMyCmt(){
@@ -335,12 +340,17 @@ public class MemberService {
       System.out.println("로그인되지않았습니다. 로그인 먼저 해주세요.");
       return;
     }
+    boolean check = false;
     for(Comment c : CommentService.comments){
       if(loginMember.getId().equals(c.getId())){
         if(c.getStatus()==0){
           System.out.println((c.getNestedCmt()!=null?"(답글)":"")+c);
+          check = true;
         }
       }
+    }
+    if(!check){
+      System.out.println("작성하신 댓글이 없습니다.");
     }
   }
   public static void showMyInfo() {
