@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -304,7 +303,7 @@ public class PostService {
   }
   public static boolean showPostDatail() throws Exception {
     if(MemberService.loginMember==null){
-      System.out.println("비회원은 게시글을 조회할 수 있습니다.");
+      System.out.println("비회원은 게시글을 조회할 수 없습니다.");
       return false;
     }
     System.out.print("조회할 게시글의 번호를 입력하세요 : ");
@@ -345,10 +344,10 @@ public class PostService {
         }
       }
       if(posts.get(idx).getId().equals(MemberService.loginMember.getId())){
-        System.out.println("1. 게시글 수정, 2.게시글 삭제, 0.취소 : ");
+        System.out.print("1. 게시글 수정, 2.게시글 삭제, 0.취소 : ");
         int sel = s.nextInt();
         if(sel==0){
-          System.out.println("카테고리 선택으로 돌아갑니다.");
+          System.out.println("취소.");
           selectedPost=null;
           return false;
         }else if(sel==1){
@@ -428,21 +427,23 @@ public class PostService {
   }
 
   public static void bestPostList() {
-    Comparator<Post> bestPost = new Comparator<Post>() {
+    List<Post> temp = new ArrayList<Post>(posts); //배열 복사
+
+    Comparator<Post> bestPost = new Comparator<Post>() { //복사한 배열 내림차순 정렬
       @Override
       public int compare(Post p1, Post p2){
         int a = p1.getView();
         int b =p2.getView();
-        if(a>b){
+        if(a<b){
           return 1;
         }else{
           return-1;
         }
       }
     };
-    Collections.sort(posts, bestPost);
-    for(int i=0;i<10;i++){
-      System.out.println(posts.get(i));
+    Collections.sort(temp, bestPost);
+    for(int i=0;i<10;i++){ //10개만 출력
+      System.out.println(temp.get(i));
     }
   }
 }
