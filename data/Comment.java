@@ -114,6 +114,6 @@ public class Comment {
 
   @Override
   public String toString() {
-    return (nestedCmt!=null?"  ㄴ":"")+nickname+" : "+commentText+"   "+createDate+"(no."+commentNo+")";
+    return nickname+" : "+commentText+"   "+createDate+"(no."+commentNo+")";
   }
 }

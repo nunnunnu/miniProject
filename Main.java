@@ -11,7 +11,7 @@ public class Main {
   public static void main(String[] args) throws Exception {
     // MemberService.makeMaster();
     // MemberService.makeDummymemberData(10);
-    // PostService.makeDummyPostData(50);
+    // PostService.makeDummyPostData(60);
     
     MemberService.loadMemberData();
     PostService.loadPostData();
@@ -24,7 +24,7 @@ public class Main {
         System.out.print("1.글 등록, 2.글 목록, 96,회원가입, 97.로그인, 0.종료 : >> ");
       }else if(MemberService.loginMember.getStatus()==3){
         System.out.println("### "+MemberService.loginMember.getNickname()+"님 환영합니다.");
-        System.out.print("1.글 등록, 2.글 목록, 3.블라인드 관리 96,회원가입, 97.로그인, 0.종료 : >> ");        
+        System.out.print("1.글 등록, 2.글 목록, 3.블라인드 관리 99.로그아웃, 0.종료 : >> ");        
       }else{
         System.out.println("### "+MemberService.loginMember.getNickname()+"님 환영합니다.");
         System.out.print("1.글 등록, 2.글 목록, 98.회원정보, 99.로그아웃, 0.종료 : >> ");
@@ -53,13 +53,14 @@ public class Main {
           }else if(sel==1){ //회원정보 - 작성 글 보기
             MemberService.showMyPost();
             while(true){
-              System.out.print("1.글 수정, 2.글 삭제, 0.취소"); 
+              System.out.print("1.글 수정, 2.글 삭제, 0.취소 : "); 
               sel=s.nextInt();
               if(sel==1){ //작성 글 보기 - 글 수정
                 PostService.modifyPost();
               }else if(sel==2){ //작성 글 보기 - 글 삭제
                 PostService.deletePost();
               }else if(sel==0){ //작성 글 보기 - 취소(회원정보로 이동)
+                PostService.selectedPost=null;
                 System.out.println("돌아갑니다.");
                 break;
               }else{ //작성 글 보기 - 번호 잘못 선택
@@ -108,7 +109,7 @@ public class Main {
               s.nextLine();
               if(sel==1){ //글 목록 조회 - 글 상세 조회
                 check = PostService.showPostDatail();
-                if(!check){
+                if(PostService.selectedPost!=null){
                   System.out.print("댓글 달기-Y, 나가기-아무키나 누르세요 : ");
                   String confirm = s.nextLine();
                   if(confirm.equalsIgnoreCase("y")){
@@ -119,8 +120,10 @@ public class Main {
                     break;
                   }
                 }
+                PostService.selectedPost=null;
                 break;
               }else if(sel==0){ //글 목록 조회 - 메인화면으로
+                PostService.selectedPost=null;
                 System.out.println("돌아갑니다.");
                 break;
               }else{ //글 목록 조회 - 번호 잘못입력
@@ -133,7 +136,7 @@ public class Main {
         }//글 목록 조회 while문 종료
       }else if(sel==3){
         while(true){
-          System.out.println("1,블라인드 게시글관리, 2.블라인드 댓글 관리, 3.블라인드 회원관리, 0.메인화면으로 이동 : ");
+          System.out.print("1,블라인드 게시글관리, 2.블라인드 댓글 관리, 3.블라인드 회원관리, 0.메인화면으로 이동 : ");
           sel = s.nextInt();
           s.nextLine();
           if(sel==0){
@@ -143,10 +146,8 @@ public class Main {
             PostService.blockPostList();
             PostService.unBlockPost();
           }else if(sel==2){
-            CommentService.blockCmtList();
             CommentService.unBlockCmd();
           }else if(sel==3){
-            MemberService.blockMemberList();
             MemberService.unBlockMember();
           }
         }

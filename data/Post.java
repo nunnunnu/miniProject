@@ -17,6 +17,15 @@ public class Post {
   public static String[] cate = {"공지","정보","잡담","유머","  팁","이슈"};
   SimpleDateFormat f = new SimpleDateFormat("yy-MM-dd HH:mm");
   private String id;
+  private Integer view;
+
+  public Integer getView() {
+    return this.view;
+  }
+
+  public void setView(Integer view) {
+    this.view = view;
+  }
 
   public Integer getNo() {
     return this.no;
@@ -102,7 +111,7 @@ public class Post {
       return true;
     }else if(MemberService.loginMember.getStatus()==0){
       if(category>= Post.cate.length || category<=0){ //일반회원은 공지 작성 불가능
-        System.out.println("번호를 잘못입력하셨습니다??.");
+        System.out.println("번호를 잘못입력하셨습니다.");
         return false;
       }
     }else if(MemberService.loginMember.getStatus()==3){
@@ -141,12 +150,13 @@ public class Post {
 
 	
   public String makePostData(){
-    return title+","+content+","+nickname+","+createDate+","+modDate+","+status+","+category+","+id+","+no;
+    return title+","+content+","+nickname+","+createDate+","+modDate+","+status+","+category+","+id+","+no+","+view;
   }
 
   public void showDetailInfo(int idx) {
+    view++;
     System.out.println("["+cate[category]+"] "+title+" "+createDate+"(no."+no+")");
-    System.out.println("작성자 : "+nickname);
+    System.out.println("작성자 : "+nickname+"      조회수:"+view);
     System.out.println("---------------------------------------------------------");
     System.out.println(content);
     System.out.println();
@@ -157,13 +167,12 @@ public class Post {
       System.out.println("게시글 작성자 아이디 "+id);
     }
     System.out.println("---------------------------------------------------------");
-
   }
 
   @Override
   public String toString() {
     return 
-      "["+cate[category]+"] "+title+" "+createDate+"(no."+no+")";
+      "["+cate[category]+"] "+title+" "+createDate+" "+view+"(no."+no+")";
   }
 
 

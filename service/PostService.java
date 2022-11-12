@@ -9,11 +9,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-import data.Comment;
 import data.Post;
 
 public class PostService {
@@ -26,7 +28,9 @@ public class PostService {
   public static void makeDummyPostData(int n) throws Exception {
     for(int i=0;i<n;i++){
       int r = (int)(Math.random()*Post.cate.length-1)+1;
+      int ranview = (int)(Math.random()*150);
       Post p = new Post(no, "글 제목입니다"+i, "글 내용입니다."+i, r,"닉네임"+i%10,"user00"+i%10,0);
+      p.setView(ranview);
       posts.add(p);
 
     BufferedWriter writer = new BufferedWriter(
@@ -62,6 +66,7 @@ public class PostService {
       Integer category = Integer.parseInt(split[6]);
       String id = split[7];
       no = Integer.parseInt(split[8]);
+      Integer view = Integer.parseInt(split[9]);
       
       Post p = new Post(no, title, content, category, nickname, id, status);
       p.setCreateDate(createDate);
@@ -71,6 +76,7 @@ public class PostService {
       }
       p.setStatus(status);
       p.setCategory(category);
+      p.setView(view);
       posts.add(p);
     }
     no++;
@@ -98,7 +104,6 @@ public class PostService {
         System.out.println(p.getCategory());
         break;
       }
-      System.out.println(p.getCategory());
     }
     while(true){
       System.out.print("글 제목 : ");
@@ -114,6 +119,7 @@ public class PostService {
       break;
       }
     }
+    p.setView(0);
     posts.add(p);
     BufferedWriter writer = new BufferedWriter(
       new OutputStreamWriter(
@@ -134,9 +140,9 @@ public class PostService {
     }
     System.out.println("=============게시글 수정==============");
     if(selectedPost==null){
-      System.out.println("------------------내가 작성한 글 목록------------------");
-      MemberService.showMyPost();
-      System.out.println("-----------------------------------------------------");
+      // System.out.println("------------------내가 작성한 글 목록------------------");
+      // MemberService.showMyPost();
+      // System.out.println("-----------------------------------------------------");
       System.out.print("수정할 게시글의 번호를 입력하세요");
       Integer no = s.nextInt();
       s.nextLine();
@@ -152,7 +158,7 @@ public class PostService {
     String title;
     String content;
     Integer category; //0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈
-    Post p = new Post(no, null, null, 0);
+    Post p = new Post(no, null, null, 1);
     if(selectedPost.getId().equals(MemberService.loginMember.getId())){
       while(true){
         System.out.println("수정할 정보를 선택하세요 : ");
@@ -160,6 +166,7 @@ public class PostService {
         int sel = s.nextInt();
         s.nextLine();
         if(sel==0){
+          // selectedPost=null;
           System.out.println("게시글 수정이 종료되었습니다.");
           return;
         }else if(sel==1){
@@ -173,7 +180,6 @@ public class PostService {
               
               postFileCover();
               System.out.println("카테고리가 수정되었습니다.");
-              selectedPost=null;
               break;
             }
           }
@@ -187,7 +193,6 @@ public class PostService {
               
               postFileCover();
               System.out.println("글 제목이 수정되었습니다.");
-              selectedPost=null;
               break;
             }
           }
@@ -201,7 +206,6 @@ public class PostService {
               
               postFileCover();
               System.out.println("글 제목이 수정되었습니다.");
-              selectedPost=null;
               break;
             }
           }
@@ -229,27 +233,25 @@ public class PostService {
       System.out.println("아직 로그인하지 않으셨습니다. 로그인 먼저 해주세요");
       return;
     }
-    int idx=0;
-    boolean check = false;
+    int idx=-1;
     System.out.println("=============게시글 삭제==============");
     if(selectedPost==null){
-      System.out.println("------------------내가 작성한 글 목록------------------");
-      MemberService.showMyPost();
-      System.out.println("-----------------------------------------------------");
-      System.out.print("삭제할 게시글의 번호를 입력하세요");
+      // System.out.println("------------------내가 작성한 글 목록------------------");
+      // MemberService.showMyPost();
+      // System.out.println("-----------------------------------------------------");
+      System.out.print("삭제할 게시글의 번호를 입력하세요 : ");
       Integer postNo = s.nextInt();
       for(int i=0;i<posts.size();i++){
         if(posts.get(i).getNo()==postNo){
           idx=i;
-          check=true;
+          selectedPost = posts.get(i);
           break;
         }
       }
       selectedPost.showDetailInfo(idx);
-      selectedPost = posts.get(idx);
     }
     s.nextLine();
-    if(check || selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
+    if(idx!=-1 && selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
       System.out.println("존재하지 않는 게시글입니다.");
     }else if(selectedPost.getId().equals(MemberService.loginMember.getId())){
       System.out.println("정말로 삭제하시겠습니까?(삭제-y, 취소-아무키나 누르세요)");
@@ -258,11 +260,9 @@ public class PostService {
         selectedPost.setStatus(2);
         postFileCover();
         System.out.println("삭제가 완료되었습니다.");
-        selectedPost=null;
       }
     }else {
       System.out.println("본인이 작성한 글만 삭제할 수 있습니다.");
-      selectedPost=null;
       return;
     }
   }
@@ -316,14 +316,16 @@ public class PostService {
       if(posts.get(i).getNo()==postNo){
         idx=i;
         check=false;
+        selectedPost=posts.get(i);
         break;
       }
     }
-    selectedPost = posts.get(idx);
     if(check || posts.get(idx).getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
       System.out.println("존재하지 않는 게시글입니다.");
+      return false;
     }else{
       posts.get(idx).showDetailInfo(idx);
+      postFileCover();
       CommentService.showCmtList();
       if(MemberService.loginMember.getStatus()==3){
         System.out.println("1.게시글 블라인드, 2.댓글 블라인드, 3.회원 블라인드 0.취소");
@@ -334,6 +336,7 @@ public class PostService {
         }else if(sel==1){
           materPostBlock(idx);
         }else if(sel==2){
+          CommentService.blockCmtList();
           CommentService.materCmtBlock();
         }else if(sel==3){
           MemberService.materMemberBlock();
@@ -358,7 +361,6 @@ public class PostService {
         }
       }
     }
-    // selectedPost=null;
     return false;
   }
   public static void materPostBlock(int idx) throws Exception {
@@ -374,41 +376,73 @@ public class PostService {
       System.out.println("해당 메뉴는 운영자만 사용가능합니다.");
     }
   }
-  public static void blockPostList() {
+  public static boolean blockPostList() {
+    boolean check = true;
     if(MemberService.loginMember.getStatus()==3){
       for(Post p : posts){
         if(p.getStatus()==1){
           System.out.println(p);
+          check = false;
         }
       }
     }else{
       System.out.println("해당 기능은 운영자만 사용 가능합니다.");
-    }
-  }
-  public static void unBlockPost() throws Exception {
-    System.out.println("블라인드 해제할 게시글의 번호를 입력하세요");
-    int sel = s.nextInt();
-    s.nextLine();
-    int idx=0;
-    boolean check = false;
-    for(int i=0;i<posts.size();i++){
-      if(posts.get(i).getNo()==sel){
-        idx=i;
-        check=true;
-        break;
-      }
+      return false;
     }
     if(check){
-      System.out.println("정말 해당 게시글의 블라인드를 해제하시겠습니까? (예-Y,아니오-아무키나 누르세요) :");
-      String confirm = s.nextLine();
-      if(confirm.equalsIgnoreCase("y")){
-        posts.get(idx).setStatus(0);
-        postFileCover();
-        System.out.println("해당 게시글이 블라인드 해제되었습니다.");
+      System.out.println("블라인드된 게시글이 없습니다.");
+      return false;
+    }
+    return true;
+  }
+  public static void unBlockPost() throws Exception {
+    if(blockPostList()){
+      System.out.println("블라인드 해제할 게시글의 번호를 입력하세요");
+      int sel = s.nextInt();
+      s.nextLine();
+      int idx=0;
+      boolean check = false;
+      for(int i=0;i<posts.size();i++){
+        if(posts.get(i).getNo()==sel){
+          idx=i;
+          check=true;
+          break;
+        }
       }
-    }else{
-      System.out.println("해당 게시글이 존재하지 않습니다.");
+      if(check && posts.get(idx).getStatus()!=1){
+        System.out.println("블라인드되지않은 게시글입니다. 게시글 번호를 확인해주세요");
+        return;
+      }
+      if(check){
+        System.out.println("정말 해당 게시글의 블라인드를 해제하시겠습니까? (예-Y,아니오-아무키나 누르세요) :");
+        String confirm = s.nextLine();
+        if(confirm.equalsIgnoreCase("y")){
+          posts.get(idx).setStatus(0);
+          postFileCover();
+          System.out.println("해당 게시글이 블라인드 해제되었습니다.");
+        }
+      }else{
+        System.out.println("해당 게시글이 존재하지 않습니다.");
+      }
     }
   }
-  
+
+  public static void bestPostList() {
+    Comparator<Post> bestPost = new Comparator<Post>() {
+      @Override
+      public int compare(Post p1, Post p2){
+        int a = p1.getView();
+        int b =p2.getView();
+        if(a>b){
+          return 1;
+        }else{
+          return-1;
+        }
+      }
+    };
+    Collections.sort(posts, bestPost);
+    for(int i=0;i<10;i++){
+      System.out.println(posts.get(i));
+    }
+  }
 }

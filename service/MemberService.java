@@ -140,6 +140,12 @@ public class MemberService {
       regNo = s.nextLine();
       check = m.setRegNo(regNo);
       if(check) {
+        for(Member mem : MemberService.members){
+          if(regNo.equals(mem.getRegNo())){
+            System.out.println("이미 가입된 회원입니다. ");
+            return ;
+          }
+        }
         members.add(m);
         BufferedWriter writer = new BufferedWriter(
           new OutputStreamWriter(
@@ -290,6 +296,7 @@ public class MemberService {
       int idx = members.indexOf(loginMember); //로그인 한 회원의 인덱스를 얻어옴
       loginMember.setStatus(2);
       members.set(idx, loginMember);
+      System.out.println(members.get(idx).getStatus());
       memberFileCover();
       MemberService.loginMember=null;
       System.out.println("회원 탈퇴가 완료되었습니다.");
@@ -331,7 +338,7 @@ public class MemberService {
     for(Comment c : CommentService.comments){
       if(loginMember.getId().equals(c.getId())){
         if(c.getStatus()==0){
-          System.out.println(c);
+          System.out.println((c.getNestedCmt()!=null?"(답글)":"")+c);
         }
       }
     }
@@ -367,35 +374,48 @@ public class MemberService {
     }
   }
 
-  public static void blockMemberList() {
+  public static boolean blockMemberList() {
+    boolean check = true;
     for(Member m : members){
       if(m.getStatus()==1){
         System.out.println(m);
-      }
-    }
-  }
-  public static void unBlockMember() throws Exception {
-    System.out.println("블라인드 해제할 회원의 아이디를 입력하세요");
-    String sel = s.nextLine();
-    int idx=0;
-    boolean check = false;
-    for(int i=0;i<members.size();i++){
-      if(members.get(i).getId().equals(sel)){
-        idx=i;
-        check=true;
-        break;
+        check = false;
       }
     }
     if(check){
-      System.out.println("정말 해당 회원의 블라인드를 해제하시겠습니까? (예-Y,아니오-아무키나 누르세요) :");
-      String confirm = s.nextLine();
-      if(confirm.equalsIgnoreCase("y")){
-        members.get(idx).setStatus(0);
-        memberFileCover();
-        System.out.println("해당 회원이 블라인드 해제되었습니다.");
+      System.out.println("정지된 회원이 없습니다.");
+      return false;
+    }
+    return true;
+  }
+  public static void unBlockMember() throws Exception {
+    if(blockMemberList()){
+      System.out.println("블라인드 해제할 회원의 아이디를 입력하세요");
+      String sel = s.nextLine();
+      int idx=0;
+      boolean check = false;
+      for(int i=0;i<members.size();i++){
+        if(members.get(i).getId().equals(sel)){
+          idx=i;
+          check=true;
+          break;
+        }
       }
-    }else{
-      System.out.println("해당 해원이 존재하지 않습니다.");
+      if(check && members.get(idx).getStatus()!=1){
+        System.out.println("정지되지않은 회원입니다. 아이디를 확인해주세요");
+        return;
+      }
+      if(check){
+        System.out.println("정말 해당 회원의 블라인드를 해제하시겠습니까? (예-Y,아니오-아무키나 누르세요) :");
+        String confirm = s.nextLine();
+        if(confirm.equalsIgnoreCase("y")){
+          members.get(idx).setStatus(0);
+          memberFileCover();
+          System.out.println("해당 회원이 블라인드 해제되었습니다.");
+        }
+      }else{
+        System.out.println("해당 해원이 존재하지 않습니다.");
+      }
     }
   }
 }

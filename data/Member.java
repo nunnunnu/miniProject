@@ -124,16 +124,9 @@ public class Member{
     if(regNo.length()!=13){
       System.out.println("주민등록번호는 기호없이 13자리로 입력해주세요.");
       return false;
-    }else{
-      for(Member m : MemberService.members){
-        if(regNo.equals(m.getRegNo())){
-          System.out.println("이미 가입된 회원입니다. ");
-          return false;
-        }
-      }
+    }
       this.regNo = regNo;
       return true;
-    }
   }
 
   public String makeMemberData(){
