@@ -58,8 +58,10 @@ public class Main {
               sel=s.nextInt();
               if(sel==1){ //작성 글 보기 - 글 수정
                 PostService.modifyPost();
+                break;
               }else if(sel==2){ //작성 글 보기 - 글 삭제
                 PostService.deletePost();
+                break;
               }else if(sel==0){ //작성 글 보기 - 취소(회원정보로 이동)
                 PostService.selectedPost=null;
                 System.out.println("돌아갑니다.");
@@ -75,9 +77,10 @@ public class Main {
               sel=s.nextInt();
               if(sel==1){ // 작성 댓글 보기 - 댓글 수정
                 CommentService.modifyCmt();
-                
+                break;
               }else if(sel==2){ //작성 댓글 보기 - 댓글 삭제
                 CommentService.deleteCmd();
+                break;
               }else if(sel==0){ //작성 댓글 보기 - 취소(회원정보로 이동)
                 System.out.println("돌아갑니다.");
                 break;
@@ -146,7 +149,6 @@ public class Main {
             System.out.println("메인화면으로 이동합니다.");
             break;
           }else if(sel==1){
-            PostService.blockPostList();
             PostService.unBlockPost();
           }else if(sel==2){
             CommentService.unBlockCmd();
@@ -164,7 +166,6 @@ public class Main {
             CommentService.createCmt();
           }else{
             System.out.println("댓글 달기를 취소하셨습니다.");
-            break;
           }
         }
         PostService.selectedPost=null;
