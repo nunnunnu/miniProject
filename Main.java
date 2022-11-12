@@ -14,9 +14,9 @@ public class Main {
     // PostService.makeDummyPostData(50);
     
     MemberService.loadMemberData();
-    // PostService.loadPostData();
+    PostService.loadPostData();
     // CommentService.makeDummyCmtData(100);
-    // CommentService.loadCmtData();
+    CommentService.loadCmtData();
     // MemberService.loginMember = new Member("123456", "123456", "aaaaaa", "ddddd", "123456", "1111111111111");
     while(true){
       System.out.println("======================메뉴를 선택하세요======================");
@@ -69,10 +69,10 @@ public class Main {
           }else if(sel==2){ //회원 정보 - 작성 댓글 보기
             MemberService.showMyCmt();
             while(true){
-              System.out.print("1.댓글 수정(안만들었음), 2.댓글 삭제, 0.취소");
+              System.out.print("1.댓글 수정, 2.댓글 삭제, 0.취소 : ");
               sel=s.nextInt();
-              if(sel==1){ // 작성 댓글 보기 - 댓글 수정(미구현)
-                System.out.println("아직 지원하지않는 기능입니다.");
+              if(sel==1){ // 작성 댓글 보기 - 댓글 수정
+                CommentService.modifyCmt();
                 
               }else if(sel==2){ //작성 댓글 보기 - 댓글 삭제
                 CommentService.deleteCmd();

@@ -358,7 +358,7 @@ public class PostService {
         }
       }
     }
-    selectedPost=null;
+    // selectedPost=null;
     return false;
   }
   public static void materPostBlock(int idx) throws Exception {

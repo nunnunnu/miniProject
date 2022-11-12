@@ -27,13 +27,11 @@ public class CommentService {
   public static void makeDummyCmtData(int n) throws Exception {
     for(int i=0;i<n;i++){
       int r = (int)(Math.random()*PostService.posts.size());
-      int r2 = (int)(Math.random()*MemberService.members.size());
+      int r2 = (int)(Math.random()*10);
       PostService.selectedPost = PostService.posts.get(r);
-      System.out.println(r);
-      Comment c = new Comment("댓글내용입니다."+i, commentNo);
-      c.setId("user00"+r2);
-      c.setPostNo(r);
-      c.setNickname("닉네임"+r2);
+      Date now = new Date();
+      Comment c = new Comment("댓글내용입니다."+i, commentNo,r,"user00"+r2,"닉네임"+r2, now,0 );
+
       BufferedWriter writer = new BufferedWriter(
         new OutputStreamWriter(
           new FileOutputStream(
@@ -70,6 +68,10 @@ public class CommentService {
       commentNo=cmtNo;
       
       Comment c = new Comment(commentText, cmtNo, postNo, id, nickname, createDate, status);
+      c.setCreateDate(createDate);
+      if(!split[7].equals("null")){
+        c.setNestedCmt(Integer.parseInt(split[7]));
+      }
       comments.add(c);
     }
     commentNo++;
@@ -124,23 +126,29 @@ public class CommentService {
   public static void showCmtList() {
     if(PostService.selectedPost==null){ //선택 글이 없으면 모두 조회
       for(Comment c : CommentService.comments){
-        if(c.getStatus()==0){
+        if(c.getStatus()==0 && c.getNestedCmt()==null){
           System.out.print(c);
           if(MemberService.loginMember.getStatus()==3){
             System.out.print(" - "+c.getId());
+          }
+          for(Comment co : CommentService.comments){
+            if(c.getNestedCmt()==co.getNestedCmt() && c.getNestedCmt()!=null){
+              System.out.println(c);
+            }
           }
           System.out.println();
         }
       }
     }
     for(Comment c : CommentService.comments){
-      if(c.getPostNo()==PostService.selectedPost.getNo()){
-        if(c.getStatus()==0){
-          System.out.print(c);
-          if(MemberService.loginMember.getStatus()==3){
-            System.out.print(" - "+c.getId());
+      if(c.getPostNo()==PostService.selectedPost.getNo() && c.getStatus()==0){
+        if(c.getNestedCmt()==null){
+          System.out.println(c+(MemberService.loginMember.getStatus()==3?(" - "+c.getId()):""));
+        }
+        for(Comment co : CommentService.comments){
+          if(c.getCommentNo()==co.getNestedCmt()){
+            System.out.println(co+(MemberService.loginMember.getStatus()==3?(" - "+c.getId()):""));
           }
-          System.out.println();
         }
       }
     }
@@ -154,13 +162,32 @@ public class CommentService {
     Comment c = new Comment(null, commentNo);
     String content;
     while(true){
+      int idx =-1;
+      System.out.println("답글을 다시려면 해당 댓글의 댓글 번호를 입력하세요, 일반 댓글을 다시려면 -1을 입력하세요. : > ");
+      int nested = s.nextInt();
+      s.nextLine();
+      if(nested!=-1){
+        for(int i=0;i<comments.size();i++){
+          if(comments.get(i).getCommentNo()==nested && comments.get(i).getStatus()==0){
+            idx=i;
+            c.setNestedCmt(nested);
+          }
+        }
+        if(comments.get(idx).getNestedCmt()!=null){
+          System.out.println("답글의 답글은 현재 지원하지 않습니다.");
+          return;
+        }
+        if(idx==-1){
+          System.out.println("해당 댓글이 존재하지 않습니다.");
+        }
+      }
       System.out.print("댓글 내용 : ");
       content = s.nextLine();
       if(c.setCommentText(content)){
         System.out.println("정말로 댓글을 등록하시겠습니까?(예-Y,아니오-아무키나 입력하세요) : ");
         String confirm = s.nextLine();
         if(confirm.equalsIgnoreCase("y")){
-          comments.add(new Comment(content, commentNo));
+          comments.add(c);
           commentNo++;
           CmtFileCover();
           System.out.println("댓글이 등록되었습니다.");
@@ -236,5 +263,35 @@ public class CommentService {
     }else{
       System.out.println("해당 댓글이 존재하지 않습니다.");
     }
+  }
+  public static void modifyCmt() throws Exception {
+    while(true){
+      System.out.print("수정 할 댓글 번호를 입력하세요. : ");
+      int sel = s.nextInt();
+      s.nextLine();
+      int idx = -1;
+      for(int i=0;i<comments.size();i++){
+        if(comments.get(i).getCommentNo()==sel && comments.get(i).getStatus()==0){
+          idx=i;
+          if(!(comments.get(i).getId().equals(MemberService.loginMember.getId()))){
+            System.out.println("자신이 작성한 글만 수정할 수 있습니다.");
+            return;
+          }
+        }
+      }
+      if(idx==-1){
+        System.out.println("해당 댓글 번호가 존재하지 않습니다.");
+        break;
+      }else{
+        System.out.print("댓글 내용 : ");
+        String content = s.nextLine();
+        comments.get(idx).setCommentText(content);
+        CmtFileCover();
+        System.out.println("댓글이 수정되었습니다.");
+        return;
+      }
+    }
+    System.out.println("");
+
   }
 }
