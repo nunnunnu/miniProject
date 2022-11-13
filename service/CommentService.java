@@ -123,15 +123,20 @@ public class CommentService {
   }
 
   public static void showCmtList() {
-
     for(Comment c : comments){
-      if(c.getPostNo()==PostService.selectedPost.getNo() && c.getStatus()==0){
-        if(c.getNestedCmt()==null){
+      if(c.getNestedCmt()==null && c.getPostNo()==PostService.selectedPost.getNo()){
+        if(c.getStatus()==0){
           System.out.println(c+(MemberService.loginMember.getStatus()==3?(" - "+c.getId()):""));
+        }else if(c.getStatus()==1){
+          System.out.println("(블라인드 된 댓글입니다.)");
         }
         for(Comment co : comments){
           if(c.getCommentNo()==co.getNestedCmt()){
-            System.out.println("  ㄴ"+co+(MemberService.loginMember.getStatus()==3?(" - "+c.getId()):""));
+            if(co.getStatus()==0){
+              System.out.println("  ㄴ"+co+(MemberService.loginMember.getStatus()==3?(" - "+c.getId()):""));
+            }else if(co.getStatus()==1){
+              System.out.println("  ㄴ(블라인드 된 댓글입니다.)");
+            }
           }
         }
       }

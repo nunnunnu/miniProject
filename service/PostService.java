@@ -286,13 +286,19 @@ public class PostService {
       if(idx==6){ //6번이면 전체출력
         if(p.getStatus()==0){
           System.out.println(p);
+        }else if(p.getStatus()==1){
+          System.out.println("(블라인드된 게시글입니다.)");
         }
       }else if(idx<0 || idx>Post.cate.length){ 
         System.out.println("입력값이 잘못되었습니다.");
         return;
       }else{
-        if(p.getStatus()==0 && p.getCategory()==idx){
-          System.out.println(p);
+        if(p.getCategory()==idx){
+          if(p.getStatus()==0){
+            System.out.println(p);
+          }else if(p.getStatus()==1){
+            System.out.println("(블라인드된 게시글입니다.)");
+          }
         }
       }
     }
@@ -329,9 +335,9 @@ public class PostService {
         if(sel==0){
           System.out.println("취소되었습니다"); 
         }else if(sel==1){
+          PostService.selectedPost=null;
           materPostBlock(idx);
         }else if(sel==2){
-          CommentService.blockCmtList();
           CommentService.materCmtBlock();
         }else if(sel==3){
           MemberService.materMemberBlock();
@@ -440,6 +446,13 @@ public class PostService {
     };
     Collections.sort(temp, bestPost);
     for(int i=0;i<10;i++){ //10개만 출력
+      if(temp.get(i).getStatus()==1){
+        System.out.println("(블라인드 된 게시글입니다.");
+        continue;
+      }else if(temp.get(i).getStatus()==2){
+        System.out.println("(삭제 된 게시글입니다.)");
+        continue;
+      }
       System.out.println(temp.get(i));
     }
   }
