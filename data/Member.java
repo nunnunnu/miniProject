@@ -50,7 +50,7 @@ public class Member{
 	}
   
 	public boolean setPwd(String pwd) throws Exception {
-    if(AES.Decrypt(pwd).length()<6){
+    if(AES.Decrypt(pwd).length()<6){ //암호화를 하면 null도 암호화된 코드로 나타나 length가 6자리 이상으로 나타남. 검사를 위해 잠시 복호화
       System.out.println("비밀번호는 6자리 이상으로 등록해주세요.");
       return false;
     }

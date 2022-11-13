@@ -23,7 +23,7 @@ public class CommentService {
   public static SimpleDateFormat f = new SimpleDateFormat("MM-dd HH:mm");
   public static Scanner s = new Scanner(System.in);
 
-  public static void makeDummyCmtData(int n) throws Exception {
+  public static void makeDummyCmtData(int n) throws Exception { //
     for(int i=0;i<n;i++){
       int r = (int)(Math.random()*PostService.posts.size());
       int r2 = (int)(Math.random()*10);

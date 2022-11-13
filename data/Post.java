@@ -106,10 +106,14 @@ public class Post {
   }
 
   public boolean setCategory(Integer category) {
+    if(category==null){ //null이 들어왔을때 아래 비교연산자를 사용하지않도록 return시켜줌.
+      return false;
+    }
     if(MemberService.loginMember==null){
       this.category = category;
       return true;
-    }else if(MemberService.loginMember.getStatus()==0){
+    }else if(MemberService.loginMember.getStatus()==0){ 
+
       if(category>= Post.cate.length || category<=0){ //일반회원은 공지 작성 불가능
         System.out.println("번호를 잘못입력하셨습니다.");
         return false;
