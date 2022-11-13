@@ -13,10 +13,9 @@ public class Comment {
   private String nickname;
   private String commentText;
   private String createDate;
-  private Integer status;
+  private Integer status;   //0.조회가능 1.삭제, 2.블라인드. 
   private Integer nestedCmt;
-  
-  //0.조회가능 1.삭제, 2.블라인드. 
+
   SimpleDateFormat f = new SimpleDateFormat("MM-dd HH:mm");
   
   public Integer getNestedCmt() {

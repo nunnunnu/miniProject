@@ -156,7 +156,7 @@ public class PostService {
     String title;
     String content;
     Integer category; //0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈
-    Post p = new Post(no, null, null, 1);
+    Post p = new Post(no, null, null, null);
     if(selectedPost.getId().equals(MemberService.loginMember.getId())){
       while(true){
         System.out.println("수정할 정보를 선택하세요 : ");
@@ -336,9 +336,9 @@ public class PostService {
           System.out.println("취소되었습니다"); 
         }else if(sel==1){
           PostService.selectedPost=null;
-          materPostBlock(idx);
+          MasterService.materPostBlock(idx);
         }else if(sel==2){
-          CommentService.materCmtBlock();
+          MasterService.materCmtBlock();
         }else if(sel==3){
           MemberService.materMemberBlock();
         }else{
@@ -365,70 +365,6 @@ public class PostService {
     }
     return false;
   }
-  public static void materPostBlock(int idx) throws Exception {
-    if(MemberService.loginMember.getStatus()==3){
-      System.out.println("해당 게시글을 블라인드처리 하시겠습니까?(예-Y,아니오-아무키나 누르세요) :");
-      String confirm = s.nextLine();
-      if(confirm.equalsIgnoreCase("y")){
-        posts.get(idx).setStatus(1);
-        postFileCover();
-        System.out.println("게시글이 블라인드 되었습니다.");
-      }
-    }else{
-      System.out.println("해당 메뉴는 운영자만 사용가능합니다.");
-    }
-  }
-  public static boolean blockPostList() {
-    boolean check = true;
-    if(MemberService.loginMember.getStatus()==3){
-      for(Post p : posts){
-        if(p.getStatus()==1){
-          System.out.println(p);
-          check = false;
-        }
-      }
-    }else{
-      System.out.println("해당 기능은 운영자만 사용 가능합니다.");
-      return false;
-    }
-    if(check){
-      System.out.println("블라인드된 게시글이 없습니다.");
-      return false;
-    }
-    return true;
-  }
-  public static void unBlockPost() throws Exception {
-    if(blockPostList()){
-      System.out.println("블라인드 해제할 게시글의 번호를 입력하세요");
-      int sel = s.nextInt();
-      s.nextLine();
-      int idx=0;
-      boolean check = false;
-      for(int i=0;i<posts.size();i++){
-        if(posts.get(i).getNo()==sel){
-          idx=i;
-          check=true;
-          break;
-        }
-      }
-      if(check && posts.get(idx).getStatus()!=1){
-        System.out.println("블라인드되지않은 게시글입니다. 게시글 번호를 확인해주세요");
-        return;
-      }
-      if(check){
-        System.out.println("정말 해당 게시글의 블라인드를 해제하시겠습니까? (예-Y,아니오-아무키나 누르세요) :");
-        String confirm = s.nextLine();
-        if(confirm.equalsIgnoreCase("y")){
-          posts.get(idx).setStatus(0);
-          postFileCover();
-          System.out.println("해당 게시글이 블라인드 해제되었습니다.");
-        }
-      }else{
-        System.out.println("해당 게시글이 존재하지 않습니다.");
-      }
-    }
-  }
-
   public static void bestPostList() {
     List<Post> temp = new ArrayList<Post>(posts); //배열 복사
 

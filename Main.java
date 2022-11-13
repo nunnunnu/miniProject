@@ -3,6 +3,7 @@ import java.util.Scanner;
 import data.Member;
 import data.Post;
 import service.CommentService;
+import service.MasterService;
 import service.MemberService;
 import service.PostService;
 
@@ -149,11 +150,11 @@ public class Main {
             System.out.println("메인화면으로 이동합니다.");
             break;
           }else if(sel==1){
-            PostService.unBlockPost();
+            MasterService.unBlockPost();
           }else if(sel==2){
-            CommentService.unBlockCmd();
+            MasterService.unBlockCmd();
           }else if(sel==3){
-            MemberService.unBlockMember();
+            MasterService.unBlockMember();
           }
         }
       }else if(sel==3){

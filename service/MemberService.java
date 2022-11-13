@@ -210,7 +210,6 @@ public class MemberService {
     String name;
     String birth;
     boolean check;
-    Member m = new Member();
     System.out.println("===============회원정보 수정=================");
     int idx = members.indexOf(loginMember); //로그인 한 회원의 인덱스를 얻어옴
     System.out.println("비밀번호를 다시 입력해주세요");
@@ -381,51 +380,6 @@ public class MemberService {
       }
     }else{
       System.out.println("운영자만 사용 가능한 기능입니다.");
-    }
-  }
-
-  public static boolean blockMemberList() {
-    boolean check = true;
-    for(Member m : members){
-      if(m.getStatus()==1){
-        System.out.println(m);
-        check = false;
-      }
-    }
-    if(check){
-      System.out.println("정지된 회원이 없습니다.");
-      return false;
-    }
-    return true;
-  }
-  public static void unBlockMember() throws Exception {
-    if(blockMemberList()){
-      System.out.println("블라인드 해제할 회원의 아이디를 입력하세요");
-      String sel = s.nextLine();
-      int idx=0;
-      boolean check = false;
-      for(int i=0;i<members.size();i++){
-        if(members.get(i).getId().equals(sel)){
-          idx=i;
-          check=true;
-          break;
-        }
-      }
-      if(check && members.get(idx).getStatus()!=1){
-        System.out.println("정지되지않은 회원입니다. 아이디를 확인해주세요");
-        return;
-      }
-      if(check){
-        System.out.println("정말 해당 회원의 블라인드를 해제하시겠습니까? (예-Y,아니오-아무키나 누르세요) :");
-        String confirm = s.nextLine();
-        if(confirm.equalsIgnoreCase("y")){
-          members.get(idx).setStatus(0);
-          memberFileCover();
-          System.out.println("해당 회원이 블라인드 해제되었습니다.");
-        }
-      }else{
-        System.out.println("해당 해원이 존재하지 않습니다.");
-      }
     }
   }
 }
