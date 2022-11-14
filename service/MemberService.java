@@ -32,15 +32,7 @@ public class MemberService {
       Member m = new Member("user00"+i, AES.Encrypt("pwd000"+i), "닉네임"+i, "이름"+i, birth, regNo);
       members.add(m);
 
-    BufferedWriter writer = new BufferedWriter(
-      new OutputStreamWriter(
-        new FileOutputStream(
-          new File("members.dat"),true 
-        ), "UTF-8" 
-      )
-    );
-      writer.write(m.makeMemberData()+"\r\n");
-      writer.close();
+      memberFileAdd(m);
     }
   }
   public static void makeMaster() throws Exception { //운영자 계정 생성
@@ -48,21 +40,13 @@ public class MemberService {
     Member m = new Member("master1", AES.Encrypt("pwd1234"), "운영자", "박진희", "970707","9707072000000");
     m.setStatus(3);
     members.add(m);
-    BufferedWriter writer = new BufferedWriter(
-      new OutputStreamWriter(
-        new FileOutputStream(
-          new File("members.dat"),true 
-        ), "UTF-8" 
-      )
-    );
-      writer.write(m.makeMemberData()+"\r\n");
-      writer.close();
+    memberFileAdd(m);
   }
   public static void loadMemberData() throws Exception { //회원 파일 로드
     BufferedReader reader = new BufferedReader(
       new InputStreamReader(
         new FileInputStream(
-          new File("members.dat")
+          new File("data_file/members.dat")
         ),"UTF-8"
       )
     );
@@ -140,15 +124,7 @@ public class MemberService {
           }
         }
         members.add(m); //가입된 회원이 아니라면 members list에 추가
-        BufferedWriter writer = new BufferedWriter(
-          new OutputStreamWriter(
-            new FileOutputStream(
-              new File("members.dat"),true 
-            ), "UTF-8" 
-          )
-        ); 
-        writer.write(m.makeMemberData()+"\r\n");
-        writer.close(); //회원 파일에 새로운 데이터 추가
+        memberFileAdd(m);
         System.out.println("회원가입이 완료되었습니다."); 
         break;
       }
@@ -285,7 +261,7 @@ public class MemberService {
     BufferedWriter writer = new BufferedWriter(
         new OutputStreamWriter(
           new FileOutputStream(
-            new File("members.dat") 
+            new File("data_file/members.dat") 
           ), "UTF-8" 
         )
       );
@@ -293,6 +269,17 @@ public class MemberService {
         writer.write(m.makeMemberData()+"\r\n");
       }
       writer.close();
+  }
+  public static void memberFileAdd(Member m) throws Exception {
+    BufferedWriter writer = new BufferedWriter(
+      new OutputStreamWriter(
+        new FileOutputStream(
+          new File("data_file/members.dat"),true 
+        ), "UTF-8" 
+      )
+    ); 
+    writer.write(m.makeMemberData()+"\r\n");
+    writer.close(); //회원 파일에 새로운 데이터 추가
   }
   public static void showMyPost(){
     if(loginMember==null){

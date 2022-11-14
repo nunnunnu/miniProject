@@ -35,7 +35,7 @@ public class PostService {
     BufferedWriter writer = new BufferedWriter( 
       new OutputStreamWriter(
         new FileOutputStream(
-          new File("posts.dat"),true 
+          new File("data_file/posts.dat"),true 
         ), "UTF-8" 
       )
     );
@@ -49,7 +49,7 @@ public class PostService {
     BufferedReader reader = new BufferedReader(
       new InputStreamReader(
         new FileInputStream(
-          new File("posts.dat")
+          new File("data_file/posts.dat")
         ),"UTF-8"
       )
     );
@@ -122,7 +122,7 @@ public class PostService {
     BufferedWriter writer = new BufferedWriter(
       new OutputStreamWriter(
         new FileOutputStream(
-          new File("posts.dat"),true 
+          new File("data_file/posts.dat"),true 
         ), "UTF-8" 
       )
     );
@@ -216,7 +216,7 @@ public class PostService {
     BufferedWriter writer = new BufferedWriter(
       new OutputStreamWriter(
         new FileOutputStream(
-          new File("posts.dat")
+          new File("data_file/posts.dat")
         ), "UTF-8" 
       )
     );
@@ -358,7 +358,7 @@ public class PostService {
         }
       }
     }
-    return false;
+    return true;
   }
   public static void bestPostList() { //조회수 상위 10개를 조회하는 메소드
     List<Post> temp = new ArrayList<Post>(posts); //posts를 temp에 복사

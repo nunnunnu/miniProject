@@ -33,7 +33,7 @@ public class CommentService {
       BufferedWriter writer = new BufferedWriter( //댓글 파일에 추가
         new OutputStreamWriter(
           new FileOutputStream(
-            new File("comments.dat"),true 
+            new File("data_file/comments.dat"),true 
           ), "UTF-8" 
         )
       );
@@ -48,7 +48,7 @@ public class CommentService {
     BufferedReader reader = new BufferedReader(
       new InputStreamReader(
         new FileInputStream(
-          new File("comments.dat")
+          new File("data_file/comments.dat")
         ),"UTF-8"
       )
     );
@@ -109,7 +109,7 @@ public class CommentService {
     BufferedWriter writer = new BufferedWriter(
       new OutputStreamWriter(
         new FileOutputStream(
-          new File("comments.dat")
+          new File("data_file/comments.dat")
         ), "UTF-8" 
       )
     );
@@ -194,6 +194,7 @@ public class CommentService {
           return;
         }else{
           System.out.println("댓글 등록이 취소되었습니다.");
+          return;
         }
       }
     } 

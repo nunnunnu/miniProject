@@ -16,11 +16,12 @@ public class Main {
     
     MemberService.loadMemberData();
     PostService.loadPostData();
-    CommentService.makeDummyCmtData(1);
+    // CommentService.makeDummyCmtData(100);
     CommentService.loadCmtData();
 
     while(true){
       showMenu();
+      
       int sel = s.nextInt();
       s.nextLine();
       if(sel==0){ //메인메뉴 - 종료
@@ -96,15 +97,13 @@ public class Main {
         PostService.createPost();
       }else if(sel==2){ //메인메뉴 - 글 목록 조회
         while(true){ //글 목록 조회 while문
-          boolean check = PostService.selectCate();
-          if(check){ //카테고리 선택이 정상적으로 이루어졌을때만 조회가능
+          if(PostService.selectCate()){ //카테고리 선택이 정상적으로 이루어졌을때만 조회가능
             while(true){
               System.out.print("1.글 상세 조회, 0.카테고리 선택으로 : ");
               sel = s.nextInt();
               s.nextLine();
               if(sel==1){ //글 목록 조회 - 글 상세 조회
-                check = PostService.showPostDatail();
-                if(check){ //글 상세조회가 성공적으로 이루어졌을때만 실행
+                if(PostService.showPostDatail()){ //글 상세조회가 성공적으로 이루어졌을때만 실행
                   System.out.print("댓글 달기-Y, 나가기-아무키나 누르세요 : ");
                   String confirm = s.nextLine();
                   if(confirm.equalsIgnoreCase("y")){
@@ -168,7 +167,7 @@ public class Main {
   public static void showMenu() { //메인메뉴
     System.out.println("======================메뉴를 선택하세요======================");
     if(MemberService.loginMember==null){ //로그아웃 상태
-      System.out.print("1.글 등록, 2.글 목록, ,3.베스트 게시물, 96,회원가입, 97.로그인, 0.종료 : >> ");
+      System.out.print("1.글 등록, 2.글 목록, 3.베스트 게시물, 96,회원가입, 97.로그인, 0.종료 : >> ");
     }else if(MemberService.loginMember.getStatus()==3){ //운영자 계정 접속시 메뉴
       System.out.println("### "+MemberService.loginMember.getNickname()+"님 환영합니다.");
       System.out.print("1.글 등록, 2.글 목록, 3.베스트 게시물, 4.블라인드 관리 99.로그아웃, 0.종료 : >> ");        
