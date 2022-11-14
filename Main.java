@@ -198,9 +198,9 @@ public class Main {
             CommentService.createCmt();
           }else{
             System.out.println("댓글 달기를 취소하셨습니다.");
+            PostService.selectedPost=null;
           }
         }
-        PostService.selectedPost=null;
       }else{
         System.out.println("번호를 잘못 선택하셨습니다.");
       }
