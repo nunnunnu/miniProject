@@ -294,6 +294,8 @@ public class PostService {
           break;
         }
       }
+    }else{
+      idx = posts.indexOf(selectedPost);
     }
     if(idx==-1 || selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
       System.out.println("존재하지 않는 게시글입니다.");
@@ -304,6 +306,7 @@ public class PostService {
         selectedPost.setStatus(2); //선택 게시물의 상태를 삭제 상태(2)로 변경
         postFileCover(); //파일 덮어쓰기
         System.out.println("삭제가 완료되었습니다.");
+        selectedPost=null;
       }
     }else { //게시글의 아이디와 로그인 아이디가 다를경우
       System.out.println("본인이 작성한 글만 삭제할 수 있습니다.");

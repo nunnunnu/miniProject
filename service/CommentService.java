@@ -108,6 +108,8 @@ public class CommentService {
       comments.get(idx).setStatus(2);//해당 댓글의 상태 삭제로 변경
       CmtFileCover(); //파일 덮어쓰기
       System.out.println("삭제가 완료되었습니다.");
+      }else{
+        System.out.println("삭제가 취소되었습니다.");
       }
     }
   }
