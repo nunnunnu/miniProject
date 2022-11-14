@@ -1,5 +1,6 @@
 package service;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import data.Comment;
@@ -61,6 +62,7 @@ public class MasterService {
                 PostService.posts.get(idx).setStatus(1); //게시글의 상태를 블라인드로 수정
                 PostService.postFileCover(); //파일 덮어쓰기
                 System.out.println("게시글이 블라인드 되었습니다.");
+                PostService.selectedPost = null;
             }
         } else {
             System.out.println("해당 메뉴는 운영자만 사용가능합니다.");
@@ -88,8 +90,17 @@ public class MasterService {
     public static void unBlockPost() throws Exception {
         if (blockPostList()) { //블라인드 게시글 조회가 정상적으로 이루어졌다면
             System.out.println("블라인드 해제할 게시글의 번호를 입력하세요");
-            int sel = s.nextInt();
-            s.nextLine();
+            int sel;
+            while(true){
+                try{
+                    sel = s.nextInt();
+                    s.nextLine();
+                    break;
+                }catch(InputMismatchException e){
+                    System.out.println("숫자를 입력해주세요.");
+                    s.nextLine();
+                }
+            }
             int idx = 0;
             boolean check = false;
             for (int i = 0; i < PostService.posts.size(); i++) {
@@ -118,30 +129,37 @@ public class MasterService {
     }
     public static void materCmtBlock() throws Exception {
         if (MemberService.loginMember.getStatus() == 3) { //로그인 계정이 운영자일때만
-            if(blockCmtList()){ //블라인드 댓글 조회가 정상적으로 이루어졌을때만
-                System.out.print("블라인드 할 댓글의 번호를 입력하세요 : ");
-                int no = s.nextInt();
-                s.nextLine();
-                boolean check = true;
-                int idx = 0;
-                for (int i = 0; i < CommentService.comments.size(); i++) { 
-                    if (CommentService.comments.get(i).getCommentNo() == no) { //입력한 번호의 댓글 인덱스 찾기
-                        idx = i;
-                        check = false;
-                        break;
-                    }
+            System.out.print("블라인드 할 댓글의 번호를 입력하세요 : ");
+            int no;
+            while(true){
+                try{
+                    no = s.nextInt();
+                    s.nextLine();
+                    break;
+                }catch(InputMismatchException e){
+                    System.out.println("숫자를 입력해주세요.");
+                    s.nextLine();
                 }
-                if (check || CommentService.comments.get(idx).getStatus() != 0) { //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
-                    System.out.println("존재하지 않는 댓글입니다.");
-                } else {
-                    System.out.println(CommentService.comments.get(idx)); //블라인드 할 댓글을 출력
-                    System.out.println("정말로 블라인드처리 하시겠습니까?(예-Y, 아니오-아무키나 누르세요)"); 
-                    String sel = s.nextLine();
-                    if (sel.equalsIgnoreCase("y")) {
-                        CommentService.comments.get(idx).setStatus(1); //블라인드 상태로 변경
-                        CommentService.CmtFileCover(); //파일 덮어쓰기
-                        System.out.println("해당 댓글이 블라인드 완료되었습니다.");
-                    }
+            }
+            boolean check = true;
+            int idx = 0;
+            for (int i = 0; i < CommentService.comments.size(); i++) { 
+                if (CommentService.comments.get(i).getCommentNo() == no) { //입력한 번호의 댓글 인덱스 찾기
+                    idx = i;
+                    check = false;
+                    break;
+                }
+            }
+            if (check || CommentService.comments.get(idx).getStatus() != 0) { //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
+                System.out.println("존재하지 않는 댓글입니다.");
+            } else {
+                System.out.println(CommentService.comments.get(idx)); //블라인드 할 댓글을 출력
+                System.out.println("정말로 블라인드처리 하시겠습니까?(예-Y, 아니오-아무키나 누르세요)"); 
+                String sel = s.nextLine();
+                if (sel.equalsIgnoreCase("y")) {
+                    CommentService.comments.get(idx).setStatus(1); //블라인드 상태로 변경
+                    CommentService.CmtFileCover(); //파일 덮어쓰기
+                    System.out.println("해당 댓글이 블라인드 완료되었습니다.");
                 }
             }
         } else {
@@ -169,8 +187,17 @@ public class MasterService {
     public static void unBlockCmd() throws Exception { //블라인드 댓글 해제
         if (blockCmtList()) {
             System.out.println("블라인드 해제할 댓글의 번호를 입력하세요");
-            int sel = s.nextInt();
-            s.nextLine();
+            int sel;
+            while(true){
+                try{
+                    sel = s.nextInt();
+                    s.nextLine();
+                    break;
+                }catch(InputMismatchException e){
+                    System.out.println("숫자를 입력해주세요.");
+                    s.nextLine();
+                }
+            }
             int idx = 0;
             boolean check = false;
             for (int i = 0; i < CommentService.comments.size(); i++) {

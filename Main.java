@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import data.Member;
@@ -21,9 +22,15 @@ public class Main {
 
     while(true){
       showMenu();
-      
-      int sel = s.nextInt();
-      s.nextLine();
+      int sel;
+      try{
+        sel = s.nextInt();
+        s.nextLine();
+      }catch(InputMismatchException e){
+        System.out.println("숫자를 입력해주세요.");
+        s.nextLine();
+        continue;
+      }
       if(sel==0){ //메인메뉴 - 종료
         System.out.println("프로그램을 종료합니다.");
         s.close();
@@ -39,7 +46,14 @@ public class Main {
             break;
           }
           System.out.print("1.작성 글 보기, 2.작성 댓글 보기, 3.회원정보 수정, 4.회원 탈퇴 0.메인화면으로 : ");
-          sel=s.nextInt();
+          try{
+            sel = s.nextInt();
+            s.nextLine();
+          }catch(InputMismatchException e){
+            System.out.println("숫자를 입력해주세요.");
+            s.nextLine();
+            continue;
+          }
           if(sel==0){ //회원정보 - 종료
             System.out.println("메인화면으로 돌아갑니다.");
             break;
@@ -47,7 +61,14 @@ public class Main {
             MemberService.showMyPost();
             while(true){
               System.out.print("1.글 수정, 2.글 삭제, 0.취소 : "); 
-              sel=s.nextInt();
+              try{
+                sel = s.nextInt();
+                s.nextLine();
+              }catch(InputMismatchException e){
+                System.out.println("숫자를 입력해주세요.");
+                s.nextLine();
+                continue;
+              }
               if(sel==1){ //작성 글 보기 - 글 수정
                 PostService.modifyPost();
                 break;
@@ -66,7 +87,14 @@ public class Main {
             MemberService.showMyCmt();
             while(true){
               System.out.print("1.댓글 수정, 2.댓글 삭제, 0.취소 : ");
-              sel=s.nextInt();
+              try{
+                sel = s.nextInt();
+                s.nextLine();
+              }catch(InputMismatchException e){
+                System.out.println("숫자를 입력해주세요.");
+                s.nextLine();
+                continue;
+              }
               if(sel==1){ // 작성 댓글 보기 - 댓글 수정
                 CommentService.modifyCmt();
                 break;
@@ -100,8 +128,14 @@ public class Main {
           if(PostService.selectCate()){ //카테고리 선택이 정상적으로 이루어졌을때만 조회가능
             while(true){
               System.out.print("1.글 상세 조회, 0.카테고리 선택으로 : ");
-              sel = s.nextInt();
-              s.nextLine();
+              try{
+                sel = s.nextInt();
+                s.nextLine();
+              }catch(InputMismatchException e){
+                System.out.println("숫자를 입력해주세요.");
+                s.nextLine();
+                continue;
+              }
               if(sel==1){ //글 목록 조회 - 글 상세 조회
                 if(PostService.showPostDatail()){ //글 상세조회가 성공적으로 이루어졌을때만 실행
                   System.out.print("댓글 달기-Y, 나가기-아무키나 누르세요 : ");
@@ -133,8 +167,14 @@ public class Main {
             break;
           }
           System.out.print("1,블라인드 게시글관리, 2.블라인드 댓글 관리, 3.블라인드 회원관리, 0.메인화면으로 이동 : ");
-          sel = s.nextInt();
-          s.nextLine();
+          try{
+            sel = s.nextInt();
+            s.nextLine();
+          }catch(InputMismatchException e){
+            System.out.println("숫자를 입력해주세요.");
+            s.nextLine();
+            continue;
+          }
           if(sel==0){ //메인화면으로 이동
             System.out.println("메인화면으로 이동합니다.");
             break;
@@ -148,8 +188,8 @@ public class Main {
         }
       }else if(sel==3){ //베스트 게시글 10개 조회
         PostService.bestPostList();
-        boolean check = PostService.showPostDatail();
-        if(check){
+        PostService.showPostDatail();
+        if(PostService.selectedPost!=null){
           System.out.print("댓글 달기-Y, 나가기-아무키나 누르세요 : ");
           String confirm = s.nextLine();
           if(confirm.equalsIgnoreCase("y")){

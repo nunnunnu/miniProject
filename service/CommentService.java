@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -81,8 +82,17 @@ public class CommentService {
       return;
     }
     System.out.print("삭제할 댓글 번호를 입력하세요 : "); 
-    Integer no = s.nextInt();
-    s.nextLine();
+    Integer no;
+    while(true){
+      try{
+        no = s.nextInt();
+        s.nextLine();
+        break;
+      }catch(InputMismatchException e){
+        System.out.println("숫자를 입력해주세요.");
+        s.nextLine();
+      }
+    }
     int idx=0;
     boolean check = true;
     for(int i=0;i<comments.size();i++){ //댓글번호와 일치하는 댓글의 인덱스 찾기
@@ -154,8 +164,17 @@ public class CommentService {
     while(true){
       int idx =-1;
       System.out.println("답글을 다시려면 해당 댓글의 댓글 번호를 입력하세요, 일반 댓글을 다시려면 -1을 입력하세요. : > ");
-      int nested = s.nextInt();
-      s.nextLine();
+      int nested;
+      while(true){
+        try{
+          nested = s.nextInt();
+          s.nextLine();
+          break;
+        }catch(InputMismatchException e){
+          System.out.println("숫자를 입력해주세요.");
+          s.nextLine();
+        }
+      }
       if(nested!=-1){ //답댓글 작성
         for(int i=0;i<comments.size();i++){
           if(comments.get(i).getCommentNo()==nested && comments.get(i).getStatus()==0){ //답글을 달 댓글이 조회가능상태일때 인덱스 번호를 받아옴 
@@ -202,8 +221,17 @@ public class CommentService {
   public static void modifyCmt() throws Exception { //댓글 수정
     while(true){
       System.out.print("수정 할 댓글 번호를 입력하세요. : ");
-      int sel = s.nextInt();
-      s.nextLine();
+      int sel;
+      while(true){
+        try{
+          sel = s.nextInt();
+          s.nextLine();
+          break;
+        }catch(InputMismatchException e){
+          System.out.println("숫자를 입력해주세요.");
+          s.nextLine();
+        }
+      };
       int idx = -1;
       for(int i=0;i<comments.size();i++){
         if(comments.get(i).getCommentNo()==sel && comments.get(i).getStatus()==0){ //수정할 댓글의 상태가 조회가능상태일때, 댓글의 인덱스 번호 받아오기

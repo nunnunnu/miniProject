@@ -54,7 +54,7 @@
 42,54,user002,닉네임2,댓글내용입니다.53,11-11 22:34,0,null
 19,55,user005,닉네임5,댓글내용입니다.54,11-11 22:34,0,null
 0,56,user003,닉네임3,댓글내용입니다.55,11-11 22:34,0,null
-2,57,user004,닉네임4,댓글내용입니다.56,11-11 22:34,1,null
+2,57,user004,닉네임4,댓글내용입니다.56,11-11 22:34,0,null
 48,58,user009,닉네임9,댓글내용입니다.57,11-11 22:34,0,null
 25,59,user005,닉네임5,댓글내용입니다.58,11-11 22:34,0,null
 52,60,user005,닉네임5,댓글내용입니다.59,11-11 22:34,0,null
@@ -110,13 +110,15 @@
 52,110,user004,닉네임4,eeeeeeeeeeeeeeeeeee,11-12 20:03,0,94
 51,111,bis02251,qudtls,어쩌러ㅏ고,11-12 20:08,0,109
 44,112,bis02251,qudtls,ekenfwjkehflsdg,11-12 20:11,0,23
-50,113,user001,닉네임1,dddddddddddddddddddd,11-12 20:31,0,24
+50,113,user001,닉네임1,dddddddddddddddddddd,11-12 20:31,1,24
 47,114,user001,닉네임1,eeeeeeeeeeeeeeeeeeeeee,11-12 20:32,0,80
 18,115,user005,닉네임5,eeeeeeeeeeeeeeeeeeeeeeeeeeee,11-12 21:18,0,null
 51,116,user005,닉네임5,qqqqqqqqqqqqqqqqqqqqqqqq,11-12 21:19,0,10
 35,117,user009,닉네임9,eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee,11-13 10:03,1,37
 50,118,user001,닉네임1,댓글을 수정했습니다,11-13 10:10,0,24
 46,119,user001,닉네임1,ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ,11-13 19:52,0,93
-59,120,user001,닉네임1,ddddddddddddddddddddddddddddddddddd,11-13 19:52,0,null
+59,120,user001,닉네임1,ddddddddddddddddddddddddddddddddddd,11-13 19:52,1,null
 68,121,aaaaaa,aa,안녕하세요,11-14 10:42,0,null
 68,122,eeeeee,eee,반갑습니다,11-14 10:48,0,null
+52,123,user001,닉네임1,rrrrrrrrrrrrrr,11-14 11:07,0,null
+40,124,user001,닉네임1,eeeeeeeeeeeeeeeeeeee,11-14 11:13,0,null

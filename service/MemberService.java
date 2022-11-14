@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -187,8 +188,17 @@ public class MemberService {
       while(true){
         System.out.println("수정 할 회원정보를 입력하세요");
         System.out.println("1.비밀번호, 2.닉네임, 3.이름, 4.생년월일, 0.종료");
-        int sel = s.nextInt();
-        s.nextLine();
+        int sel;
+        while(true){
+          try{
+            sel = s.nextInt();
+            s.nextLine();
+            break;
+          }catch(InputMismatchException e){
+            System.out.println("숫자를 입력해주세요.");
+            s.nextLine();
+          }
+        }
         if(sel==0){
           System.out.println("회원 정보 수정을 종료합니다.");
           return;

@@ -7,11 +7,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.channels.FileChannel.MapMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -97,8 +99,16 @@ public class PostService {
       }else if(MemberService.loginMember.getStatus()==0){ //일반회원 메뉴(공지 작성 불가능)
         System.out.print("카테고리 : (1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈) : ");
       }
-      category = s.nextInt();
-      s.nextLine();
+      while(true){
+        try{
+          category = s.nextInt();
+          s.nextLine();
+          break;
+        }catch(InputMismatchException e){
+          System.out.println("숫자를 입력해주세요.");
+          s.nextLine();
+        }
+      }
       if(p.setCategory(category)){ //카테고리가 제대로 들어갔다면 while문 종료
         break;
       }
@@ -139,16 +149,25 @@ public class PostService {
     System.out.println("=============게시글 수정==============");
     if(selectedPost==null){ //수정 할 게시글이 선택되지 않았다면 선택 먼저
       System.out.print("수정 할 게시글 번호를 입력하세요 : ");
-      Integer no = s.nextInt();
-      s.nextLine();
+      Integer no;
+      while(true){
+        try{
+          no = s.nextInt();
+          s.nextLine();
+          break;
+        }catch(InputMismatchException e){
+          System.out.println("숫자를 입력해주세요.");
+          s.nextLine();
+        }
+      }
       int idx=-1;
       for(int i=0;i<posts.size();i++){ //입력받은 게시글 번호와 일치하는 인덱스번호 찾기
         if(posts.get(i).getNo()==no){
           idx=i;
+          selectedPost = posts.get(idx); //수정 할 게시글 설정(주소값 받아옴. 수정 시 posts도 같이 수정됨)
         }
       }
-      selectedPost = posts.get(idx); //수정 할 게시글 설정(주소값 받아옴. 수정 시 posts도 같이 수정됨)
-      if(idx!=-1 || selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
+      if(idx==-1 || selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
         System.out.println("존재하지 않는 게시글입니다.");
         return;
       }
@@ -161,8 +180,17 @@ public class PostService {
       while(true){
         System.out.println("수정할 정보를 선택하세요");
         System.out.print("1.카테고리, 2.글 제목, 3.글 내용, 0.종료 : ");
-        int sel = s.nextInt();
-        s.nextLine();
+        int sel;
+        while(true){
+          try{
+            sel = s.nextInt();
+            s.nextLine();
+            break;
+          }catch(InputMismatchException e){
+            System.out.println("숫자를 입력해주세요.");
+            s.nextLine();
+          }
+        }
         if(sel==0){
           selectedPost=null;
           System.out.println("게시글 수정이 종료되었습니다.");
@@ -170,12 +198,19 @@ public class PostService {
         }else if(sel==1){
           while(true){
             System.out.print("카테고리 : (1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈)");
-            category = s.nextInt();
-            s.nextLine();
+            while(true){
+              try{
+                category = s.nextInt();
+                s.nextLine();
+                break;
+              }catch(InputMismatchException e){
+                System.out.println("숫자를 입력해주세요.");
+                s.nextLine();
+              }
+            }
             if(p.setCategory(category)){ //카테고리가 제대로 설정되었다면
               selectedPost.setCategory(category); //선택 게시물 카테고리 수정
               selectedPost.setModDate(new Date()); //선택 게시물 수정일 수정
-              
               postFileCover(); //post게시물 덮어쓰기
               System.out.println("카테고리가 수정되었습니다.");
               break; 
@@ -235,18 +270,27 @@ public class PostService {
     System.out.println("=============게시글 삭제==============");
     if(selectedPost==null){
       System.out.print("삭제할 게시글의 번호를 입력하세요 : ");
-      Integer postNo = s.nextInt();
+      Integer postNo;
+      while(true){
+        try{
+          postNo = s.nextInt();
+          s.nextLine();
+          break;
+        }catch(InputMismatchException e){
+          System.out.println("숫자를 입력해주세요.");
+          s.nextLine();
+        }
+      }
       for(int i=0;i<posts.size();i++){ //입력한 게시글 번호의 인덱스를 찾음
         if(posts.get(i).getNo()==postNo){
           idx=i;
           selectedPost = posts.get(i); //선택 게시물에 posts의 주소값을 받아와 선택게시물이 수정되면 posts도 함께 수정됨
+          selectedPost.showDetailInfo(idx);
           break;
         }
       }
-      selectedPost.showDetailInfo(idx);
     }
-    s.nextLine();
-    if(idx!=-1 || selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
+    if(idx==-1 || selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
       System.out.println("존재하지 않는 게시글입니다.");
     }else if(selectedPost.getId().equals(MemberService.loginMember.getId())){ //게시글의 아이디와 로그인 아이디가 같다면
       System.out.println("정말로 삭제하시겠습니까?(삭제-y, 취소-아무키나 누르세요)");
@@ -268,8 +312,17 @@ public class PostService {
     }
     System.out.println("조회할 게시판을 선택하세요.");
     System.out.print("0.공지, 1.정보, 2.잡담, 3.유머, 4.팁, 5.이슈, 6.전체출력, 7.종료: ");
-    int sel = s.nextInt();
-    s.nextLine();
+    int sel;
+    while(true){
+      try{
+        sel = s.nextInt();
+        s.nextLine();
+        break;
+      }catch(InputMismatchException e){
+        System.out.println("숫자를 입력해주세요.");
+        s.nextLine();
+      }
+    }
     if(sel==7){ //종료
       System.out.println("처음으로 돌아갑니다.");
       return false;
@@ -304,8 +357,17 @@ public class PostService {
       return false;
     }
     System.out.print("조회할 게시글의 번호를 입력하세요 : ");
-    Integer postNo = s.nextInt();
-    s.nextLine();
+    Integer postNo;
+    while(true){
+      try{
+        postNo = s.nextInt();
+        s.nextLine();
+        break;
+      }catch(InputMismatchException e){
+        System.out.println("숫자를 입력해주세요.");
+        s.nextLine();
+      }
+    }
     int idx=0;
     boolean check = true;
     for(int i=0;i<posts.size();i++){ //입력 게시글번호와 같은 인덱스를 찾음
@@ -325,12 +387,20 @@ public class PostService {
       CommentService.showCmtList(); //해당 게시글의 댓글 조회
       if(MemberService.loginMember.getStatus()==3){ //운영자일때 추가로 보여질 블라인드메뉴
         System.out.println("1.게시글 블라인드, 2.댓글 블라인드, 3.회원 블라인드 0.취소");
-        int sel=s.nextInt();
-        s.nextLine();
+        int sel;
+        while(true){
+          try{
+            sel = s.nextInt();
+            s.nextLine();
+            break;
+          }catch(InputMismatchException e){
+            System.out.println("숫자를 입력해주세요.");
+            s.nextLine();
+          }
+        }
         if(sel==0){
           System.out.println("취소되었습니다"); 
         }else if(sel==1){
-          PostService.selectedPost=null;
           MasterService.materPostBlock(idx);
         }else if(sel==2){
           MasterService.materCmtBlock();
@@ -342,17 +412,26 @@ public class PostService {
       }
       if(posts.get(idx).getId().equals(MemberService.loginMember.getId())){ //본인 작성 게시글일때 보여줄 게시글 수정, 삭제 메뉴
         System.out.print("1. 게시글 수정, 2.게시글 삭제, 0.취소 : ");
-        int sel = s.nextInt();
+        int sel;
+        while(true){
+          try{
+            sel = s.nextInt();
+            s.nextLine();
+            break;
+          }catch(InputMismatchException e){
+            System.out.println("숫자를 입력해주세요.");
+            s.nextLine();
+          }
+        }
         if(sel==0){
           System.out.println("취소.");
-          selectedPost=null;
-          return false;
+          return true;
         }else if(sel==1){
           modifyPost();
         }else if(sel==2){
           deletePost(); 
-          selectedPost=null; //삭제됐을때 댓글 달기 메뉴를 보이지 않기 위해 선택 게시글 초기화해줌
-          return true;
+          selectedPost=null; 
+          return false; //삭제됐을때 댓글 달기 메뉴를 보이지 않기 위해 false반환
         }else{
           System.out.println("번호를 잘못입력하셨습니다.");
         }
