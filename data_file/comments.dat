@@ -93,7 +93,7 @@
 46,93,user005,닉네임5,댓글내용입니다.92,11-11 22:34,0,null
 52,94,user006,닉네임6,댓글내용입니다.93,11-11 22:34,0,null
 4,95,user007,닉네임7,댓글내용입니다.94,11-11 22:34,0,null
-14,96,user001,닉네임1,댓글내용입니다.95,11-11 22:34,0,null
+14,96,user001,닉네임1,댓글수정했습니다,11-11 22:34,0,null
 13,97,user000,닉네임0,댓글내용입니다.96,11-11 22:34,0,null
 48,98,user008,닉네임8,댓글내용입니다.97,11-11 22:34,0,null
 4,99,user006,닉네임6,댓글내용입니다.98,11-11 22:34,0,null
@@ -123,3 +123,7 @@
 52,123,user001,닉네임1,rrrrrrrrrrrrrr,11-14 11:07,0,null
 40,124,user001,닉네임1,eeeeeeeeeeeeeeeeeeee,11-14 11:13,0,null
 52,125,user009,닉네임9,eeeeeeeeeeeeeeeeeeeeee,11-14 12:35,0,null
+19,126,id1234,뭄무,yyyyyyyyyyyyyy,11-14 13:48,0,11
+35,127,user001,닉네임1,eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee,11-14 14:12,0,null
+41,128,id0001,근그,aaaaaaaaaaaaaaaaaaaaaaaa,11-14 14:39,0,75
+23,129,id0001,근그,eeeeeeeeeeeeeeeeeeeeee,11-14 14:40,0,null

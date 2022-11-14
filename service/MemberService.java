@@ -323,10 +323,10 @@ public class MemberService {
     }
   }
 
-  public static void showMyPost(){
+  public static boolean showMyPost(){
     if(loginMember==null){
       System.out.println("로그인되지않았습니다. 로그인 먼저 해주세요.");
-      return;
+      return false;
     }
     boolean check = false;
     for(Post p : PostService.posts){
@@ -339,12 +339,14 @@ public class MemberService {
     }
     if(!check){ //작성한 게시물이 없거나 있어도 조회가능한 상태가 아닐때 메세지 출력
       System.out.println("작성하신 게시글이 없습니다.");
+      return false;
     }
+    return true;
   }
-  public static void showMyCmt(){
+  public static boolean showMyCmt(){
     if(loginMember==null){
       System.out.println("로그인되지않았습니다. 로그인 먼저 해주세요.");
-      return;
+      return false;
     }
     boolean check = false;
     for(Comment c : CommentService.comments){ //댓글의 아이디와 로그인 아이디가 같은 경우
@@ -357,7 +359,9 @@ public class MemberService {
     }
     if(!check){ //작성한 댓글이 없거나 있어도 조회가능한 상태가 아닐때 메세지 출력
       System.out.println("작성하신 댓글이 없습니다."); 
+      return false;
     }
+    return true;
   }
   public static void showMyInfo() { //로그인한 회원의 회원정보 조회
     if(loginMember==null){

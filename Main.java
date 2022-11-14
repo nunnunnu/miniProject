@@ -1,8 +1,6 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import data.Member;
-import data.Post;
 import service.CommentService;
 import service.MasterService;
 import service.MemberService;
@@ -10,7 +8,7 @@ import service.PostService;
 
 public class Main {
   public static Scanner s = new Scanner(System.in);
-  public static void main(String[] args) {
+  public static void main(String[] args)  {
     // MemberService.makeMaster();
     // MemberService.makeDummymemberData(10);
     
@@ -19,7 +17,6 @@ public class Main {
     // CommentService.makeDummyCmtData(100);
     CommentService.loadCmtData();
     // PostService.makeDummyPostData(50);
-
     while(true){
       showMenu();
       int sel;
@@ -58,56 +55,61 @@ public class Main {
             System.out.println("메인화면으로 돌아갑니다.");
             break;
           }else if(sel==1){ //회원정보 - 작성 글 보기
-            MemberService.showMyPost();
-            while(true){
-              System.out.print("1.글 수정, 2.글 삭제, 0.취소 : "); 
-              try{
-                sel = s.nextInt();
-                s.nextLine();
-              }catch(InputMismatchException e){
-                System.out.println("숫자를 입력해주세요.");
-                s.nextLine();
-                continue;
-              }
-              if(sel==1){ //작성 글 보기 - 글 수정
-                PostService.modifyPost();
-                break;
-              }else if(sel==2){ //작성 글 보기 - 글 삭제
-                PostService.deletePost();
-                break;
-              }else if(sel==0){ //작성 글 보기 - 취소(회원정보로 이동)
-                PostService.selectedPost=null;
-                System.out.println("돌아갑니다.");
-                break;
-              }else{ //작성 글 보기 - 번호 잘못 선택
-                System.out.println("번호를 잘못 선택하셨습니다.");
-              }
-            }// 작성 글 보기 while문 종료
+            if(MemberService.showMyPost()){
+              while(true){
+                System.out.print("1.글 수정, 2.글 삭제, 0.취소 : "); 
+                try{
+                  sel = s.nextInt();
+                  s.nextLine();
+                }catch(InputMismatchException e){
+                  System.out.println("숫자를 입력해주세요.");
+                  s.nextLine();
+                  continue;
+                }
+                if(sel==1){ //작성 글 보기 - 글 수정
+                  PostService.modifyPost();
+                  break;
+                }else if(sel==2){ //작성 글 보기 - 글 삭제
+                  PostService.deletePost();
+                  break;
+                }else if(sel==0){ //작성 글 보기 - 취소(회원정보로 이동)
+                  PostService.selectedPost=null;
+                  System.out.println("돌아갑니다.");
+                  break;
+                }else{ //작성 글 보기 - 번호 잘못 선택
+                  System.out.println("번호를 잘못 선택하셨습니다.");
+                }
+              }// 작성 글 보기 while문 종료
+            }
           }else if(sel==2){ //회원 정보 - 작성 댓글 보기
-            MemberService.showMyCmt();
-            while(true){
-              System.out.print("1.댓글 수정, 2.댓글 삭제, 0.취소 : ");
-              try{
-                sel = s.nextInt();
-                s.nextLine();
-              }catch(InputMismatchException e){
-                System.out.println("숫자를 입력해주세요.");
-                s.nextLine();
-                continue;
-              }
-              if(sel==1){ // 작성 댓글 보기 - 댓글 수정
-                CommentService.modifyCmt();
-                break;
-              }else if(sel==2){ //작성 댓글 보기 - 댓글 삭제
-                CommentService.deleteCmd();
-                break;
-              }else if(sel==0){ //작성 댓글 보기 - 취소(회원정보로 이동)
-                System.out.println("돌아갑니다.");
-                break;
-              }else{ // 작성댓글 - 번호 잘못 선택
-              System.out.println("번호를 잘못 선택하셨습니다");
-              }
-            }// 작성 댓글보기 while문 종료
+            if(MemberService.showMyCmt()){
+              while(true){
+                System.out.print("1.댓글 수정, 2.댓글 삭제, 0.취소 : ");
+                int sel2;
+                try{
+                  sel2 = s.nextInt();
+                  s.nextLine();
+                }catch(InputMismatchException e){
+                  System.out.println("숫자를 입력해주세요.");
+                  s.nextLine();
+                  continue;
+                }
+                if(sel2==1){ // 작성 댓글 보기 - 댓글 수정
+                  CommentService.modifyCmt();
+                  break;
+                }else if(sel2==2){ //작성 댓글 보기 - 댓글 삭제
+                  CommentService.deleteCmd();
+                  break;
+                }else if(sel2==0){ //작성 댓글 보기 - 취소(회원정보로 이동)
+                  System.out.println("돌아갑니다.");
+                  break;
+                }else{ // 작성댓글 - 번호 잘못 선택
+                  System.out.println("번호를 잘못 선택하셨습니다");
+                }
+              }// 작성 댓글보기 while문 종료
+            }else {
+              break;
+            }
           }else if(sel==3){ //회원정보 - 회원정보 수정
             MemberService.modifyMember();
           }else if(sel==4){ //회원정보 - 회원 탈퇴
@@ -162,7 +164,7 @@ public class Main {
         }//글 목록 조회 while문 종료
       }else if(sel==4){ //블라인드 관리
         while(true){
-          if(MemberService.loginMember.getStatus()!=3){
+          if(MemberService.loginMember==null || MemberService.loginMember.getStatus()!=3){
             System.out.println("해당 메뉴는 운영자만 사용가능합니다.");
             break;
           }
