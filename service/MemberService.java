@@ -23,52 +23,62 @@ public class MemberService {
   public static Scanner s = new Scanner(System.in);
 
   
-  public static void makeDummymemberData(int n) throws Exception { //회원 더미데이터 생성
+  public static void makeDummymemberData(int n) { //회원 더미데이터 생성
     for(int i=0;i<n;i++){
       int r = (int)(Math.random()*199999)+1000000;//주민 뒷자리 랜덤 값
       String birth = Integer.toString((int)(Math.random()*199999)+800000); 
       String regNo = birth+r;
       
-      
-      Member m = new Member("user00"+i, AES.Encrypt("pwd000"+i), "닉네임"+i, "이름"+i, birth, regNo);
+      try{
+        Member m = new Member("user00"+i, AES.Encrypt("pwd000"+i), "닉네임"+i, "이름"+i, birth, regNo);
+        members.add(m);
+  
+        memberFileAdd(m);
+      }catch(Exception e){
+        e.printStackTrace();
+      }
+    }
+  }
+  public static void makeMaster() { //운영자 계정 생성
+    try{
+      Member m = new Member("master1", AES.Encrypt("pwd1234"), "운영자", "박진희", "970707","9707072000000");
+      m.setStatus(3);
       members.add(m);
-
       memberFileAdd(m);
+    }catch(Exception e){
+      e.printStackTrace();
     }
   }
-  public static void makeMaster() throws Exception { //운영자 계정 생성
-
-    Member m = new Member("master1", AES.Encrypt("pwd1234"), "운영자", "박진희", "970707","9707072000000");
-    m.setStatus(3);
-    members.add(m);
-    memberFileAdd(m);
-  }
-  public static void loadMemberData() throws Exception { //회원 파일 로드
-    BufferedReader reader = new BufferedReader(
-      new InputStreamReader(
-        new FileInputStream(
-          new File("data_file/members.dat")
-        ),"UTF-8"
-      )
-    );
-    while(true){
-      String line = reader.readLine();
-      if(line == null) break; //파일의 끝에 도달하면 while문 종료
-      String[] split = line.split(",");
-      String id = split[0];
-      String pwd = split[1];
-      String nickname = split[2];
-      String name = split[3];
-      String birth = split[4];
-      Integer status = Integer.parseInt(split[5]);
-      String regNo = split[6];
-      
-      Member m = new Member(id, pwd, nickname, name, birth, regNo);
-      m.setStatus(status);
-      members.add(m);
+  public static void loadMemberData() { //회원 파일 로드
+    try{
+      BufferedReader reader = new BufferedReader(
+        new InputStreamReader(
+          new FileInputStream(
+            new File("data_file/members.dat")
+          ),"UTF-8"
+        )
+      );
+      while(true){
+        String line = reader.readLine();
+        if(line == null) break; //파일의 끝에 도달하면 while문 종료
+        String[] split = line.split(",");
+        String id = split[0];
+        String pwd = split[1];
+        String nickname = split[2];
+        String name = split[3];
+        String birth = split[4];
+        Integer status = Integer.parseInt(split[5]);
+        String regNo = split[6];
+        
+        Member m = new Member(id, pwd, nickname, name, birth, regNo);
+        m.setStatus(status);
+        members.add(m);
+      }
+    }catch(Exception e){
+      e.printStackTrace();
     }
   }
-  public static void addMember() throws Exception { //회원가입
+  public static void addMember() { //회원가입
     
     System.out.println("=============회원가입=============");
     String id;
@@ -88,9 +98,13 @@ public class MemberService {
     }
     while(true){
       System.out.print("비밀번호(6자리 이상) : ");
-      pwd = AES.Encrypt(s.nextLine()); //비밀번호 암호화
-      if(m.setPwd(pwd)){ //비밀번호가 제대로 설정되었다면 while문 종료
-        break;
+      try{
+        pwd = AES.Encrypt(s.nextLine()); //비밀번호 암호화
+        if(m.setPwd(pwd)){ //비밀번호가 제대로 설정되었다면 while문 종료
+          break;
+        }
+      }catch(Exception e){
+        e.printStackTrace();
       }
     }
     while(true){
@@ -134,7 +148,7 @@ public class MemberService {
     
   
 
-  public static void login() throws Exception {
+  public static void login() {
     if(loginMember!=null){
       System.out.println("이미 로그인되어있습니다.");
       return;
@@ -143,22 +157,26 @@ public class MemberService {
     System.out.print("아이디 : ");
     String id = s.nextLine();
     System.out.print("비밀번호 : ");
-    String pwd = AES.Encrypt(s.nextLine()); //비밀번호 암호화
-    for(Member m : members){
-      if(id.equals(m.getId()) && pwd.equals(m.getPwd()) && m.getStatus()==1){ //정지된 회원이면 메세지를 표시하고 로그인 제한
-        System.out.println("해당 회원은 정지되었습니다.");
-        return;
-      }else if(id.equals(m.getId()) && pwd.equals(m.getPwd()) && m.getStatus()==2){ //탈퇴한 회원이면 메세지를 표시하고 로그인 제한
-        System.out.println("탈퇴 한 회원입니다.");
-        return;
+    try{
+      String pwd = AES.Encrypt(s.nextLine()); //비밀번호 암호화
+      for(Member m : members){
+        if(id.equals(m.getId()) && pwd.equals(m.getPwd()) && m.getStatus()==1){ //정지된 회원이면 메세지를 표시하고 로그인 제한
+          System.out.println("해당 회원은 정지되었습니다.");
+          return;
+        }else if(id.equals(m.getId()) && pwd.equals(m.getPwd()) && m.getStatus()==2){ //탈퇴한 회원이면 메세지를 표시하고 로그인 제한
+          System.out.println("탈퇴 한 회원입니다.");
+          return;
+        }
+        if(id.equals(m.getId()) && pwd.equals(m.getPwd())) {
+          loginMember = m; //현재 로그인한 아이디에 설정
+          System.out.println("로그인되었습니다");
+        }
       }
-      if(id.equals(m.getId()) && pwd.equals(m.getPwd())) {
-        loginMember = m; //현재 로그인한 아이디에 설정
-        System.out.println("로그인되었습니다");
+      if(loginMember==null){ //모든 members를 검사했는데 일치하는 아이디와 비밀번호가 없다면(loginMember가 설정되지 않았다면)
+        System.out.println("로그인 실패. 아이디와 비밀번호를 확인해주세요");
       }
-    }
-    if(loginMember==null){ //모든 members를 검사했는데 일치하는 아이디와 비밀번호가 없다면(loginMember가 설정되지 않았다면)
-      System.out.println("로그인 실패. 아이디와 비밀번호를 확인해주세요");
+    }catch(Exception e){
+      e.printStackTrace();
     }
   }
   public static void logout() {
@@ -170,7 +188,7 @@ public class MemberService {
     System.out.println("로그아웃되었습니다.");
   }
 
-  public static void modifyMember() throws Exception {
+  public static void modifyMember() {
     if(loginMember==null){
       System.out.println("로그인이 되지않았습니다. 로그인을 먼저 해주세요");
       return;
@@ -182,75 +200,79 @@ public class MemberService {
     System.out.println("===============회원정보 수정=================");
     System.out.println("비밀번호를 다시 입력해주세요");
     System.out.print("비밀번호 : ");
-    pwd = AES.Encrypt(s.nextLine());
-    if(pwd.equals(loginMember.getPwd())){ //비밀번호가 일치한다면
-      int idx = members.indexOf(loginMember); //로그인 한 회원의 인덱스를 얻어옴
-      while(true){
-        System.out.println("수정 할 회원정보를 입력하세요");
-        System.out.println("1.비밀번호, 2.닉네임, 3.이름, 4.생년월일, 0.종료");
-        int sel;
+    try{
+      pwd = AES.Encrypt(s.nextLine());
+      if(pwd.equals(loginMember.getPwd())){ //비밀번호가 일치한다면
+        int idx = members.indexOf(loginMember); //로그인 한 회원의 인덱스를 얻어옴
         while(true){
-          try{
-            sel = s.nextInt();
-            s.nextLine();
-            break;
-          }catch(InputMismatchException e){
-            System.out.println("숫자를 입력해주세요.");
-            s.nextLine();
+          System.out.println("수정 할 회원정보를 입력하세요");
+          System.out.println("1.비밀번호, 2.닉네임, 3.이름, 4.생년월일, 0.종료");
+          int sel;
+          while(true){
+            try{
+              sel = s.nextInt();
+              s.nextLine();
+              break;
+            }catch(InputMismatchException e){
+              System.out.println("숫자를 입력해주세요.");
+              s.nextLine();
+            }
+          }
+          if(sel==0){
+            System.out.println("회원 정보 수정을 종료합니다.");
+            return;
+          }else if(sel==1){
+            while(true){
+              System.out.print("비밀번호(6자리 이상) : ");
+              pwd = AES.Encrypt(s.nextLine());
+              if(members.get(idx).setPwd(pwd)){ //비밀번호가 설정되었을때만 
+                memberFileCover(); //파일 덮어쓰기
+                System.out.println("비밀번호가 수정되었습니다.");
+                break;
+              }
+            }
+          }else if(sel==2){
+            while(true){
+              System.out.print("닉네임 : ");
+              nickname = s.nextLine();
+              if(members.get(idx).setNickname(nickname)) { //닉네임이 설정되었을때만
+                memberFileCover(); //파일 덮어쓰기
+                System.out.println("닉네임이 변경되었습니다.");
+                break;
+              }
+            }
+          }else if(sel==3){
+            while(true){
+              System.out.print("이름 : ");
+              name = s.nextLine();
+              if(members.get(idx).setName(name)) { //이름이 설정되었을때만
+                memberFileCover(); //파일 덮어쓰기
+                System.out.println("이름이 수정되었습니다.");
+                break;
+              }
+            }
+          }else if(sel==4){
+            while(true){
+              System.out.print("생년월일(6자리로 입력하세요.) : ");
+              birth = s.nextLine();
+              if(members.get(idx).setBirth(birth)){ //생년월일이 설정되었을때만
+                memberFileCover(); //파일 덮어쓰기
+                System.out.println("생년월일이 수정되었습니다.");
+                break;
+              }
+            }
+          }else{
+            System.out.println("번호를 잘못 입력하셨습니다.");
           }
         }
-        if(sel==0){
-          System.out.println("회원 정보 수정을 종료합니다.");
-          return;
-        }else if(sel==1){
-          while(true){
-            System.out.print("비밀번호(6자리 이상) : ");
-            pwd = AES.Encrypt(s.nextLine());
-            if(members.get(idx).setPwd(pwd)){ //비밀번호가 설정되었을때만 
-              memberFileCover(); //파일 덮어쓰기
-              System.out.println("비밀번호가 수정되었습니다.");
-              break;
-            }
-          }
-        }else if(sel==2){
-          while(true){
-            System.out.print("닉네임 : ");
-            nickname = s.nextLine();
-            if(members.get(idx).setNickname(nickname)) { //닉네임이 설정되었을때만
-              memberFileCover(); //파일 덮어쓰기
-              System.out.println("닉네임이 변경되었습니다.");
-              break;
-            }
-          }
-        }else if(sel==3){
-          while(true){
-            System.out.print("이름 : ");
-            name = s.nextLine();
-            if(members.get(idx).setName(name)) { //이름이 설정되었을때만
-              memberFileCover(); //파일 덮어쓰기
-              System.out.println("이름이 수정되었습니다.");
-              break;
-            }
-          }
-        }else if(sel==4){
-          while(true){
-            System.out.print("생년월일(6자리로 입력하세요.) : ");
-            birth = s.nextLine();
-            if(members.get(idx).setBirth(birth)){ //생년월일이 설정되었을때만
-              memberFileCover(); //파일 덮어쓰기
-              System.out.println("생년월일이 수정되었습니다.");
-              break;
-            }
-          }
-        }else{
-          System.out.println("번호를 잘못 입력하셨습니다.");
-        }
+      }else{
+        System.out.println("비밀번호를 잘못입력하셨습니다.");
       }
-    }else{
-      System.out.println("비밀번호를 잘못입력하셨습니다.");
+    }catch(Exception e){
+      e.printStackTrace();
     }
   }
-  public static void leaveMember() throws Exception { //회원 탈퇴
+  public static void leaveMember() { //회원 탈퇴
     if(loginMember==null){
       System.out.println("로그인이 되지않았습니다. 로그인을 먼저 해주세요");
       return;
@@ -267,30 +289,40 @@ public class MemberService {
       System.out.println("회원 탈퇴가 취소되었습니다.");
     }
   }
-  public static void memberFileCover() throws Exception{ //회원 파일 덮어쓰기 메소드
-    BufferedWriter writer = new BufferedWriter(
+
+  public static void memberFileCover() { //회원 파일 덮어쓰기 메소드
+    try{
+      BufferedWriter writer = new BufferedWriter(
+          new OutputStreamWriter(
+            new FileOutputStream(
+              new File("data_file/members.dat") 
+            ), "UTF-8" 
+          )
+        );
+        for(Member m : members){
+          writer.write(m.makeMemberData()+"\r\n");
+        }
+        writer.close();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+  }
+  public static void memberFileAdd(Member m) {
+    try{
+      BufferedWriter writer = new BufferedWriter(
         new OutputStreamWriter(
           new FileOutputStream(
-            new File("data_file/members.dat") 
+            new File("data_file/members.dat"),true 
           ), "UTF-8" 
         )
-      );
-      for(Member m : members){
-        writer.write(m.makeMemberData()+"\r\n");
-      }
-      writer.close();
+      ); 
+      writer.write(m.makeMemberData()+"\r\n");
+      writer.close(); //회원 파일에 새로운 데이터 추가
+    }catch(Exception e){
+      e.printStackTrace();
+    }
   }
-  public static void memberFileAdd(Member m) throws Exception {
-    BufferedWriter writer = new BufferedWriter(
-      new OutputStreamWriter(
-        new FileOutputStream(
-          new File("data_file/members.dat"),true 
-        ), "UTF-8" 
-      )
-    ); 
-    writer.write(m.makeMemberData()+"\r\n");
-    writer.close(); //회원 파일에 새로운 데이터 추가
-  }
+
   public static void showMyPost(){
     if(loginMember==null){
       System.out.println("로그인되지않았습니다. 로그인 먼저 해주세요.");

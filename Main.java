@@ -10,15 +10,15 @@ import service.PostService;
 
 public class Main {
   public static Scanner s = new Scanner(System.in);
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     // MemberService.makeMaster();
     // MemberService.makeDummymemberData(10);
-    // PostService.makeDummyPostData(60);
     
     MemberService.loadMemberData();
     PostService.loadPostData();
     // CommentService.makeDummyCmtData(100);
     CommentService.loadCmtData();
+    // PostService.makeDummyPostData(50);
 
     while(true){
       showMenu();

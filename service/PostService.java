@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.channels.FileChannel.MapMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,57 +32,52 @@ public class PostService {
       Post p = new Post(no, "글 제목입니다"+i, "글 내용입니다."+i, r,"닉네임"+i%10,"user00"+i%10,0);
       p.setView(ranview);
       posts.add(p);
-
-    BufferedWriter writer = new BufferedWriter( 
-      new OutputStreamWriter(
-        new FileOutputStream(
-          new File("data_file/posts.dat"),true 
-        ), "UTF-8" 
-      )
-    );
-      writer.write(p.makePostData()+"\r\n");
-      writer.close();
+      postFileAdd(p);
       no++;
     }
 
   }
-  public static void loadPostData() throws Exception { //회원 데이터 로드를 위한 메소드
-    BufferedReader reader = new BufferedReader(
-      new InputStreamReader(
-        new FileInputStream(
-          new File("data_file/posts.dat")
-        ),"UTF-8"
-      )
-    );
-    while(true){
-      String line = reader.readLine();
-      if(line == null) break;
-      String[] split = line.split(",");
-      String title = split[0];
-      String content = split[1];
-      String nickname = split[2];
-      Date createDate = f.parse(split[3]);
-      Integer status = Integer.parseInt(split[5]);
-      Integer category = Integer.parseInt(split[6]);
-      String id = split[7];
-      no = Integer.parseInt(split[8]);
-      Integer view = Integer.parseInt(split[9]);
-      
-      Post p = new Post(no, title, content, category, nickname, id, status);
-      p.setCreateDate(createDate);
-      if(!(split[4].equals("null"))){
-        Date modDate = f.parse(split[4]);
-        p.setModDate(modDate);
+  public static void loadPostData() { //회원 데이터 로드를 위한 메소드
+    try{
+      BufferedReader reader = new BufferedReader(
+        new InputStreamReader(
+          new FileInputStream(
+            new File("data_file/posts.dat")
+          ),"UTF-8"
+        )
+      );
+      while(true){
+        String line = reader.readLine();
+        if(line == null) break;
+        String[] split = line.split(",");
+        String title = split[0];
+        String content = split[1];
+        String nickname = split[2];
+        Date createDate = f.parse(split[3]);
+        Integer status = Integer.parseInt(split[5]);
+        Integer category = Integer.parseInt(split[6]);
+        String id = split[7];
+        no = Integer.parseInt(split[8]);
+        Integer view = Integer.parseInt(split[9]);
+        
+        Post p = new Post(no, title, content, category, nickname, id, status);
+        p.setCreateDate(createDate);
+        if(!(split[4].equals("null"))){
+          Date modDate = f.parse(split[4]);
+          p.setModDate(modDate);
+        }
+        p.setStatus(status);
+        p.setCategory(category);
+        p.setView(view);
+        posts.add(p);
       }
-      p.setStatus(status);
-      p.setCategory(category);
-      p.setView(view);
-      posts.add(p);
+      no++;
+    }catch(Exception e){
+      e.printStackTrace();
     }
-    no++;
   }
 
-  public static void createPost() throws Exception { //게시글 작성 메소드
+  public static void createPost() { //게시글 작성 메소드
     if(MemberService.loginMember==null){
       System.out.println("비회원은 게시글을 작성할 수 없습니다.");
       return;
@@ -129,19 +123,11 @@ public class PostService {
     }
     p.setView(0); //조회수 0으로 시작
     posts.add(p); //posts list에 추가
-    BufferedWriter writer = new BufferedWriter(
-      new OutputStreamWriter(
-        new FileOutputStream(
-          new File("data_file/posts.dat"),true 
-        ), "UTF-8" 
-      )
-    );
-      writer.write(p.makePostData()+"\r\n");
-      writer.close();  //파일에 데이터 추가
-      no++; //글 번호 1 추가
+    postFileAdd(p);
+    no++; //글 번호 1 추가
   }
   
-  public static void modifyPost() throws Exception { //글 수정 메소드
+  public static void modifyPost(){ //글 수정 메소드
     if(MemberService.loginMember==null){
       System.out.println("아직 로그인하지 않으셨습니다. 로그인 먼저 해주세요");
       return;
@@ -247,21 +233,40 @@ public class PostService {
         System.out.println("작성한 본인이 아니면 글을 수정할 수 없습니다.");
     }
   }
-  public static void postFileCover() throws Exception { //파일 덮어쓰기
-    BufferedWriter writer = new BufferedWriter(
-      new OutputStreamWriter(
-        new FileOutputStream(
-          new File("data_file/posts.dat")
-        ), "UTF-8" 
-      )
-    );
-    for(Post p : posts){
-      writer.write(p.makePostData()+"\r\n");
-    }
+  public static void postFileCover() { //파일 덮어쓰기
+    try{
+      BufferedWriter writer = new BufferedWriter(
+        new OutputStreamWriter(
+          new FileOutputStream(
+            new File("data_file/posts.dat")
+          ), "UTF-8" 
+        )
+      );
+      for(Post p : posts){
+        writer.write(p.makePostData()+"\r\n");
+      }
       writer.close();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+  }
+  public static void postFileAdd(Post p)  {
+    try{
+      BufferedWriter writer = new BufferedWriter(
+        new OutputStreamWriter(
+          new FileOutputStream(
+            new File("data_file/posts.dat"),true 
+          ), "UTF-8" 
+        )
+      );
+      writer.write(p.makePostData()+"\r\n");
+      writer.close();  //파일에 데이터 추가
+    }catch(Exception e){
+      e.printStackTrace();
+    }
   }
 
-  public static void deletePost() throws Exception { //게시글 삭제
+  public static void deletePost() { //게시글 삭제
     if(MemberService.loginMember==null){
       System.out.println("아직 로그인하지 않으셨습니다. 로그인 먼저 해주세요");
       return;
@@ -351,7 +356,7 @@ public class PostService {
     return true; //중간에 return되지 않고 게시글 리스트가 출력되었다면 true 반환
   }
 
-  public static boolean showPostDatail() throws Exception { //게시글 상세 조회
+  public static boolean showPostDatail() { //게시글 상세 조회
     if(MemberService.loginMember==null){
       System.out.println("비회원은 게시글을 조회할 수 없습니다.");
       return false;

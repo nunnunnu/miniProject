@@ -25,7 +25,7 @@ public class MasterService {
         }
         return true;
     }
-    public static void unBlockMember() throws Exception { 
+    public static void unBlockMember() { 
         if (blockMemberList()) { //정지 회원 리스트가 정상적으로 실행되었을때
             System.out.println("블라인드 해제할 회원의 아이디를 입력하세요"); 
             String sel = s.nextLine();
@@ -54,7 +54,7 @@ public class MasterService {
         }
     }
 
-    public static void materPostBlock(int idx) throws Exception { //게시글 블라인드
+    public static void materPostBlock(int idx) { //게시글 블라인드
         if (MemberService.loginMember.getStatus() == 3) { //로그인 계정이 운영자 계정일 경우에만 실행
             System.out.println("해당 게시글을 블라인드처리 하시겠습니까?(예-Y,아니오-아무키나 누르세요) :");
             String confirm = s.nextLine();
@@ -87,7 +87,7 @@ public class MasterService {
         }
         return true;
     }
-    public static void unBlockPost() throws Exception {
+    public static void unBlockPost() {
         if (blockPostList()) { //블라인드 게시글 조회가 정상적으로 이루어졌다면
             System.out.println("블라인드 해제할 게시글의 번호를 입력하세요");
             int sel;
@@ -127,7 +127,7 @@ public class MasterService {
             }
         }
     }
-    public static void materCmtBlock() throws Exception {
+    public static void materCmtBlock() {
         if (MemberService.loginMember.getStatus() == 3) { //로그인 계정이 운영자일때만
             System.out.print("블라인드 할 댓글의 번호를 입력하세요 : ");
             int no;
@@ -184,7 +184,7 @@ public class MasterService {
         }
         return true;
     }
-    public static void unBlockCmd() throws Exception { //블라인드 댓글 해제
+    public static void unBlockCmd() { //블라인드 댓글 해제
         if (blockCmtList()) {
             System.out.println("블라인드 해제할 댓글의 번호를 입력하세요");
             int sel;
@@ -224,7 +224,7 @@ public class MasterService {
             }
         }
     }
-    public static void materMemberBlock() throws Exception { //회원 정지 메소드
+    public static void materMemberBlock() { //회원 정지 메소드
         if (MemberService.loginMember.getStatus() == 3) { //운영자 계정일때만
             System.out.print("블라인드 할 회원의 아이디를 입력하세요. ");
             String id = s.nextLine();
