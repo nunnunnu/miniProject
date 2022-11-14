@@ -107,7 +107,7 @@ public class Comment {
     setCreateDate(createDate);
     setStatus(status);
   }
-  public String makeCmdData(){
+  public String makeCmdData(){ //파일 생성용 메소드
     return postNo+","+commentNo+","+id+","+nickname+","+commentText+","+createDate+","+status+","+nestedCmt;
   }
 

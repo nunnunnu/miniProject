@@ -16,7 +16,7 @@ public class Main {
     
     MemberService.loadMemberData();
     PostService.loadPostData();
-    // CommentService.makeDummyCmtData(100);
+    CommentService.makeDummyCmtData(1);
     CommentService.loadCmtData();
 
     while(true){
