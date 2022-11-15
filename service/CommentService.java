@@ -148,8 +148,10 @@ public class CommentService {
   }
 
   public static void showCmtList() { //댓글조회 메소드
+    boolean check = false;
     for(Comment c : comments){
-      if(c.getNestedCmt()==null && c.getPostNo()==PostService.selectedPost.getNo()){ //선택 게시글 번호와 같고, 답글이 아닌 일반 댓글만 조회
+      if(c.getNestedCmt()==null && c.getPostNo().equals(PostService.selectedPost.getNo())){ //선택 게시글 번호와 같고, 답글이 아닌 일반 댓글만 조회
+        check=true;
         if(c.getStatus()==0){ //조회 가능 상태일때
           System.out.println(c+(MemberService.loginMember.getStatus()==3?(" - "+c.getId()):"")); //운영자 계정으로 로그인 시 회원아이디 표시
         }else if(c.getStatus()==1){ //블라인드 된 댓글은 메세지 출력
@@ -157,14 +159,16 @@ public class CommentService {
         }else if(c.getStatus()==2){ //삭제 된 댓글일경우 메세지 출력
           System.out.println("(삭제 된 댓글입니다.)");
         }
-        for(Comment co : comments){ 
-          if(c.getCommentNo()==co.getNestedCmt()){ //위에서 출력한 댓글에 달린 답 댓글 조회
-            if(co.getStatus()==0){ //상태가 조회 가능한 상태인것만
-              System.out.println("  ㄴ"+co+(MemberService.loginMember.getStatus()==3?(" - "+c.getId()):"")); //운영자 계정으로 로그인 시 회원아이디 표시
-            }else if(co.getStatus()==1){ //블라인드 된 댓글은 메세지 출력
-              System.out.println("  ㄴ(블라인드 된 댓글입니다.)");
-            }else if(co.getStatus()==2){ //삭제 된 댓글일경우 메세지 출력
-              System.out.println("(삭제 된 댓글입니다.)");
+        if(check){
+          for(Comment co : comments){ 
+            if(c.getCommentNo().equals(co.getNestedCmt())){ //위에서 출력한 댓글에 달린 답 댓글 조회
+              if(co.getStatus()==0){ //상태가 조회 가능한 상태인것만
+                System.out.println("  ㄴ"+co+(MemberService.loginMember.getStatus()==3?(" - "+c.getId()):"")); //운영자 계정으로 로그인 시 회원아이디 표시
+              }else if(co.getStatus()==1){ //블라인드 된 댓글은 메세지 출력
+                System.out.println("  ㄴ(블라인드 된 댓글입니다.)");
+              }else if(co.getStatus()==2){ //삭제 된 댓글일경우 메세지 출력
+                System.out.println("(삭제 된 댓글입니다.)");
+              }
             }
           }
         }

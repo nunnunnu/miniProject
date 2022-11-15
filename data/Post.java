@@ -18,6 +18,15 @@ public class Post {
   SimpleDateFormat f = new SimpleDateFormat("yy-MM-dd HH:mm");
   private String id;
   private Integer view;
+  private Integer like;
+
+  public Integer getLike() {
+    return this.like;
+  }
+
+  public void setLike(Integer like) {
+    this.like = like;
+  }
 
   public Integer getView() {
     return this.view;
@@ -138,6 +147,7 @@ public class Post {
     setNickname(MemberService.loginMember.getNickname());
     setId(MemberService.loginMember.getId());
     setNo(no);
+    setLike(0);
   }
 
   //더미데이터용 생성자
@@ -150,11 +160,12 @@ public class Post {
     setNickname(nickname);
     setId(id);
     setNo(no);
+    setLike(like);
   }
 
 	
   public String makePostData(){
-    return title+","+content+","+nickname+","+createDate+","+modDate+","+status+","+category+","+id+","+no+","+view;
+    return title+","+content+","+nickname+","+createDate+","+modDate+","+status+","+category+","+id+","+no+","+view+","+like;
   }
 
   public void showDetailInfo(int idx) {
@@ -164,6 +175,7 @@ public class Post {
     System.out.println("---------------------------------------------------------");
     System.out.println(content);
     System.out.println();
+    System.out.println("추천 수 : "+like);
     if(modDate!=null){
       System.out.println("마지막 수정일 : "+modDate);
     }

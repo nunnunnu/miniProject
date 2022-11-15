@@ -25,12 +25,18 @@ public class PostService {
   public static Integer no = 1;
   public static Post selectedPost = null;
 
-  public static void makeDummyPostData(int n) throws Exception { //회원 더미데이터 생성 메소드. 매개변수로 넣은 수만큼 만들어짐
+  public static void makeDummyPostData(int n) { //회원 더미데이터 생성 메소드. 매개변수로 넣은 수만큼 만들어짐
     for(int i=0;i<n;i++){
-      int r = (int)(Math.random()*Post.cate.length-1)+1;
+      int r = (int)(Math.random()*Post.cate.length-1)+1; //카테고리 랜덤
       int ranview = (int)(Math.random()*150);
-      Post p = new Post(no, "글 제목입니다"+i, "글 내용입니다."+i, r,"닉네임"+i%10,"user00"+i%10,0);
+      int rLike = (int)(Math.random()*20);
+      int rMember = (int)(Math.random()*MemberService.members.size());
+
+      MemberService.loginMember = MemberService.members.get(rMember);
+      Post p = new Post(no, "글 제목입니다"+i, "글 내용입니다."+i, r);
+      p.setStatus(0);
       p.setView(ranview);
+      p.setLike(rLike);
       posts.add(p);
       postFileAdd(p);
       no++;
@@ -59,6 +65,7 @@ public class PostService {
         String id = split[7];
         no = Integer.parseInt(split[8]);
         Integer view = Integer.parseInt(split[9]);
+        Integer like = Integer.parseInt(split[10]);
         
         Post p = new Post(no, title, content, category, nickname, id, status);
         p.setCreateDate(createDate);
@@ -69,6 +76,7 @@ public class PostService {
         p.setStatus(status);
         p.setCategory(category);
         p.setView(view);
+        p.setLike(like);
         posts.add(p);
       }
       no++;
@@ -178,7 +186,6 @@ public class PostService {
           }
         }
         if(sel==0){
-          selectedPost=null;
           System.out.println("게시글 수정이 종료되었습니다.");
           return;
         }else if(sel==1){
@@ -477,5 +484,12 @@ public class PostService {
       }
       System.out.println(temp.get(i)); //둘다 아니라면 게시물 출력
     }
+  }
+  public static void like() {
+    Integer like = selectedPost.getLike();
+    like++;
+    selectedPost.setLike(like);
+    postFileCover();
+    System.out.println("해당 게시글을 추천하였습니다.");
   }
 }

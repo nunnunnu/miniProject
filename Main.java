@@ -14,9 +14,9 @@ public class Main {
     
     MemberService.loadMemberData();
     PostService.loadPostData();
+    // PostService.makeDummyPostData(90);
     // CommentService.makeDummyCmtData(100);
     CommentService.loadCmtData();
-    // PostService.makeDummyPostData(50);
     while(true){
       showMenu();
       int sel;
@@ -140,14 +140,7 @@ public class Main {
               }
               if(sel==1){ //글 목록 조회 - 글 상세 조회
                 if(PostService.showPostDatail()){ //글 상세조회가 성공적으로 이루어졌을때만 실행
-                  System.out.print("댓글 달기-Y, 나가기-아무키나 누르세요 : ");
-                  String confirm = s.nextLine();
-                  if(confirm.equalsIgnoreCase("y")){
-                    CommentService.createCmt();
-                  }else{
-                    System.out.println("댓글 달기를 취소하셨습니다.");
-                    break;
-                  }
+                  postMenu();
                 }
                 PostService.selectedPost=null;
               }else if(sel==0){ //글 목록 조회 - 메인화면으로
@@ -192,14 +185,7 @@ public class Main {
         PostService.bestPostList();
         PostService.showPostDatail();
         if(PostService.selectedPost!=null){
-          System.out.print("댓글 달기-Y, 나가기-아무키나 누르세요 : ");
-          String confirm = s.nextLine();
-          if(confirm.equalsIgnoreCase("y")){
-            CommentService.createCmt();
-          }else{
-            System.out.println("댓글 달기를 취소하셨습니다.");
-            PostService.selectedPost=null;
-          }
+          postMenu();
         }
       }else{
         System.out.println("번호를 잘못 선택하셨습니다.");
@@ -216,6 +202,17 @@ public class Main {
     }else{ //일반회원 접속시 메뉴
       System.out.println("### "+MemberService.loginMember.getNickname()+"님 환영합니다.");
       System.out.print("1.글 등록, 2.글 목록, 3.베스트 게시물, 98.회원정보, 99.로그아웃, 0.종료 : >> ");
+    }
+  }
+  public static void postMenu() {
+    System.out.print("댓글 달기-Y, 추천하기-L, 나가기-아무키나 누르세요 : ");
+    String confirm = s.nextLine();
+    if(confirm.equalsIgnoreCase("y")){
+      CommentService.createCmt();
+    }else if(confirm.equalsIgnoreCase("L")){
+      PostService.like();
+    }else {
+      System.out.println("댓글 달기를 취소하셨습니다.");
     }
   }
 }
