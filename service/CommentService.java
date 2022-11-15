@@ -28,14 +28,16 @@ public class CommentService {
   public static void makeDummyCmtData(int n) { //댓글 더미데이터 생성 메소드
     for(int i=0;i<n;i++){
       int r = (int)(Math.random()*PostService.posts.size()); //댓글 달 게시글 인덱스 랜덤생성
-      int r2 = (int)(Math.random()*10); //닉네임 랜덤생성
+      int rlogin = (int)(Math.random()*MemberService.members.size()); //댓글 달 게시글 인덱스 랜덤생성
+      MemberService.loginMember=MemberService.members.get(rlogin); //작성자 랜덤 지정
       PostService.selectedPost = PostService.posts.get(r); //선택 게시글 랜덤으로 지정
-      Comment c = new Comment("댓글내용입니다."+i, commentNo,r,"user00"+r2,"닉네임"+r2, new Date(),0 );
+      Comment c = new Comment("댓글내용입니다."+i, commentNo);
       
       cmtFileAdd(c);
       commentNo++;
     }
       PostService.selectedPost=null; //선택 게시글 초기화
+      MemberService.loginMember = null; //로그인 초기화
   }
 
   public static void loadCmtData() { //데이터 로드
