@@ -140,6 +140,4 @@ public class Member{
   public String toString() {
     return "아이디 : "+id+" / 닉네임 : "+nickname+" / 이름 : "+name+" / 생년월일 : "+birth;
   }
-  
-  
 }
