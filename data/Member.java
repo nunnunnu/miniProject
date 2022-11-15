@@ -11,7 +11,6 @@ public class Member{
   private String birth;
   private Integer status; //0-일반회원, 1-정지회원, 2-탈퇴회원, 3-관리자
   private String regNo; //주민번호
-  // Map<Integer, String> modMap = new HashMap<Integer, String>();
 
   public Member(){}
   public Member(String id, String pwd, String nickname, String name, String birth, String regNo) {
@@ -141,4 +140,6 @@ public class Member{
   public String toString() {
     return "아이디 : "+id+" / 닉네임 : "+nickname+" / 이름 : "+name+" / 생년월일 : "+birth;
   }
+  
+  
 }

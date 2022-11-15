@@ -2,6 +2,8 @@
   "java.project.referencedLibraries": [
     "lib/**/*.jar",
     "c:\\Users\\user\\Downloads\\tomcat-util-10.1.1.jar",
-    "c:\\Users\\nod15\\Downloads\\tomcat-util-10.1.1.jar"
+    "c:\\Users\\nod15\\Downloads\\tomcat-util-10.1.1.jar",
+    "c:\\Users\\user\\Downloads\\json-20220924-javadoc.jar",
+    "c:\\Users\\user\\Downloads\\json-simple-1.1.1.jar"
   ]
 }

@@ -417,6 +417,7 @@ public class PostService {
           System.out.println("취소되었습니다"); 
         }else if(sel==1){
           MasterService.materPostBlock(idx);
+          return false;
         }else if(sel==2){
           MasterService.materCmtBlock();
         }else if(sel==3){
@@ -492,4 +493,5 @@ public class PostService {
     postFileCover();
     System.out.println("해당 게시글을 추천하였습니다.");
   }
+
 }

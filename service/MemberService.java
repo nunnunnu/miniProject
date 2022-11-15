@@ -145,9 +145,7 @@ public class MemberService {
       }
     }
   }
-    
   
-
   public static void login() {
     if(loginMember!=null){
       System.out.println("이미 로그인되어있습니다.");
@@ -371,4 +369,5 @@ public class MemberService {
     System.out.println("============================회원정보 조회===============================");
     System.out.println(loginMember);
   }
+
 }
