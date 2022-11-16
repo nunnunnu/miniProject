@@ -168,7 +168,7 @@ public class Post {
     return title+","+content+","+nickname+","+createDate+","+modDate+","+status+","+category+","+id+","+no+","+view+","+like;
   }
 
-  public void showDetailInfo(int idx) {
+  public void showDetailInfo() {
     view++;
     System.out.println("["+cate[category]+"] "+title+" "+createDate+"(no."+no+")");
     System.out.println("작성자 : "+nickname+"      조회수:"+view);

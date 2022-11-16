@@ -278,7 +278,7 @@ public class PostService {
       System.out.println("아직 로그인하지 않으셨습니다. 로그인 먼저 해주세요");
       return;
     }
-    int idx=-1;
+    boolean check = true;
     System.out.println("=============게시글 삭제==============");
     if(selectedPost==null){
       System.out.print("삭제할 게시글의 번호를 입력하세요 : ");
@@ -295,16 +295,16 @@ public class PostService {
       }
       for(int i=0;i<posts.size();i++){ //입력한 게시글 번호의 인덱스를 찾음
         if(posts.get(i).getNo()==postNo){
-          idx=i;
+          check = false;
           selectedPost = posts.get(i); //선택 게시물에 posts의 주소값을 받아와 선택게시물이 수정되면 posts도 함께 수정됨
-          selectedPost.showDetailInfo(idx);
+          selectedPost.showDetailInfo();
           break;
         }
       }
     }else{
-      idx = posts.indexOf(selectedPost);
+      check = false;
     }
-    if(idx==-1 || selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
+    if(check || selectedPost.getStatus()!=0){ //존재하지 않거나 존재하는데 상태가 삭제or블라인드됐을경우
       System.out.println("존재하지 않는 게시글입니다.");
     }else if(selectedPost.getId().equals(MemberService.loginMember.getId())){ //게시글의 아이디와 로그인 아이디가 같다면
       System.out.println("정말로 삭제하시겠습니까?(삭제-y, 취소-아무키나 누르세요)");
@@ -397,7 +397,7 @@ public class PostService {
       System.out.println("존재하지 않는 게시글입니다.");
       return false;
     }else{
-      posts.get(idx).showDetailInfo(idx); //Post 클래스의 메소드 실행 (조회수 1 올라감) 
+      posts.get(idx).showDetailInfo(); //Post 클래스의 메소드 실행 (조회수 1 올라감) 
       postFileCover();  //1 올라간 조회수 반영을 위해 파일 덮어쓰기
       CommentService.showCmtList(); //해당 게시글의 댓글 조회
       if(MemberService.loginMember.getStatus()==3){ //운영자일때 추가로 보여질 블라인드메뉴
