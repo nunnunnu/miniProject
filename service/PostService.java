@@ -416,7 +416,7 @@ public class PostService {
         if(sel==0){
           System.out.println("취소되었습니다"); 
         }else if(sel==1){
-          MasterService.materPostBlock(idx);
+          MasterService.materPostBlock();
           return false;
         }else if(sel==2){
           MasterService.materCmtBlock();
@@ -455,14 +455,14 @@ public class PostService {
     }
     return true;
   }
-  public static void bestPostList() { //조회수 상위 10개를 조회하는 메소드
+  public static void bestPostList() { //조회수 상위 10개를 조회하는 메소드(복사한 배열 내림차순 정렬)
     List<Post> temp = new ArrayList<Post>(posts); //posts를 temp에 복사
     
-    //클래스 내의 조회수로 정렬을 하기 위해 Comparator 인터페이스를 사용(복사한 배열 내림차순 정렬)
+    //클래스 내의 조회수로 정렬을 하기 위해 Comparator 인터페이스를 사용
     Comparator<Post> bestPost = new Comparator<Post>() { 
       @Override
-      public int compare(Post p1, Post p2){ //Comparator의 compare메소드를 실행/ p1와 p2의 값을 비교(0:같음, 양수:왼쪽이큼, 음수:오른쪽이 큼)
-        //정렬 기준을 결정하는 메소드임
+      public int compare(Post p1, Post p2){ //Comparator의 compare메소드를 오버라이드/ p1와 p2의 값을 비교(0:같음, 양수:왼쪽이큼, 음수:오른쪽이 큼)
+        //정렬 기준을 결정
         int a = p1.getView();
         int b =p2.getView();
         if(a<b){ //내림차순 비교를 위해 오른쪽 값이 클때 자리 바꿈 실행
@@ -477,13 +477,13 @@ public class PostService {
     System.out.println("====================베스트 게시물=====================");
     for(int i=0;i<10;i++){ //10개만 출력
       if(temp.get(i).getStatus()==1){ //블라인드된 글은 메세지 표시
-        System.out.println("(블라인드 된 게시글입니다.)");
+        System.out.println((i+1)+" : (블라인드 된 게시글입니다.)");
         continue;
       }else if(temp.get(i).getStatus()==2){ //삭제된 글은 메세지 표시
-        System.out.println("(삭제 된 게시글입니다.)");
+        System.out.println((i+1)+" : (삭제 된 게시글입니다.)");
         continue;
       }
-      System.out.println(temp.get(i)); //둘다 아니라면 게시물 출력
+      System.out.println((i+1)+" : "+temp.get(i)); //둘다 아니라면 게시물 출력
     }
   }
   public static void like() {

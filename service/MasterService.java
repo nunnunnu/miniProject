@@ -54,12 +54,12 @@ public class MasterService {
         }
     }
 
-    public static void materPostBlock(int idx) { //게시글 블라인드
+    public static void materPostBlock() { //게시글 블라인드
         if (MemberService.loginMember.getStatus() == 3) { //로그인 계정이 운영자 계정일 경우에만 실행
             System.out.println("해당 게시글을 블라인드처리 하시겠습니까?(예-Y,아니오-아무키나 누르세요) :");
             String confirm = s.nextLine();
             if (confirm.equalsIgnoreCase("y")) {
-                PostService.posts.get(idx).setStatus(1); //게시글의 상태를 블라인드로 수정
+                PostService.selectedPost.setStatus(1); //게시글의 상태를 블라인드로 수정
                 PostService.postFileCover(); //파일 덮어쓰기
                 System.out.println("게시글이 블라인드 되었습니다.");
                 PostService.selectedPost = null;
