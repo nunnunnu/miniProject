@@ -195,7 +195,7 @@ public class Main {
   public static void showMenu() { //메인메뉴
     System.out.println("======================메뉴를 선택하세요======================");
     if (MemberService.loginMember == null) { //로그아웃 상태
-      System.out.print("1.글 등록, 2.글 목록, 3.베스트 게시물, 96,회원가입, 97.로그인, 0.종료 : >> ");
+      System.out.print("96,회원가입, 97.로그인, 0.종료 : >> ");
     } else if (MemberService.loginMember.getStatus() == 3) { //운영자 계정 접속시 메뉴
       System.out.println("### " + MemberService.loginMember.getNickname() + "님 환영합니다.");
       System.out.print("1.글 등록, 2.글 목록, 3.베스트 게시물, 4.블라인드 관리 99.로그아웃, 0.종료 : >> ");
