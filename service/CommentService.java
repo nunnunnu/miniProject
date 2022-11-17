@@ -170,7 +170,7 @@ public class CommentService {
               }else if(co.getStatus()==1){ //블라인드 된 댓글은 메세지 출력
                 System.out.println("  ㄴ(블라인드 된 댓글입니다.)");
               }else if(co.getStatus()==2){ //삭제 된 댓글일경우 메세지 출력
-                System.out.println("(삭제 된 댓글입니다.)");
+                System.out.println("  ㄴ(삭제 된 댓글입니다.)");
               }
             }
           }
